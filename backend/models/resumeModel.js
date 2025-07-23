@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { lazy, Profiler } from "react";
 
 const ResumeSchema = new mongoose.Schema({
     userId:{

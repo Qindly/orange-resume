@@ -1,7 +1,16 @@
 import React from "react";
-
+import { Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/LandingPage.jsx";
+import UserProvider from "./context/UserContext.jsx";
+import { User } from "lucide-react";
 const App = () => {
-  return <h1 class="text-3xl font-bold underline">Hello world!</h1>;
+  return (
+    <UserProvider>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+      </Routes>
+    </UserProvider>
+  );
 };
 
 export default App;
