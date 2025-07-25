@@ -34,47 +34,45 @@ const ResumeSchema = new mongoose.Schema({
         github:String,
     },
 
-    workExperience:[{
-        companyName:String,
-        role:String,
-        startDate:String,
-        endDate:String,
-        description:String,
-    },],
-
-    education:[{
-        degree:String,
-        fieldOfStudy:String,
-        startDate:String,
-        endDate:String,
-        description:String,
-    },],
-
-    skills:[{
-        skillName:String,
-        proficiency:Number,
-    },],
-
-    projects:[{
-        projectName:String,
-        description:String,
-       github:String,
-       liveDemo:String,
-    },],
-
-    certifications:[{
-        certificationName:String,
-        issuingOrganization:String,
-        issueDate:String,
-        expirationDate:String,
-    },],
-
-    languages:[{
-        languageName:String,
-        proficiency:String,
-    },],
-
-    interests:[String],
+   workExperience: [{
+        company: String,
+        role: String,
+        startDate: String,
+        endDate: String,
+        description: String
+    }],
+    education: [{
+        degree: String,
+        institution: String,
+        startDate: String,
+        endDate: String
+    }],
+    skills: [{
+        name: String,
+        progress: {
+            type: Number,
+            default: 0
+        }
+    }],
+    projects: [{
+        title: String,
+        description: String,
+        github: String,
+        liveDemo: String
+    }],
+    certifications: [{
+        title: String,
+        issuer: String,
+        year: String
+    }],
+    languages: [{
+        name: String,
+        progress: {
+            type: Number,
+            default: 0
+        }
+    }],
+    interests: [String]
 },
 {
     timestamps:{createdAt:"createAt",updatedAt:"updateAt"}

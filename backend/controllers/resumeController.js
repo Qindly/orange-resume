@@ -27,7 +27,7 @@ export const createResume = async (req, res) => {
       },
       workExperience: [
         {
-          companyName: "",
+          company: "",
           role: "",
           startDate: "",
           endDate: "",
@@ -37,21 +37,20 @@ export const createResume = async (req, res) => {
       education: [
         {
           degree: "",
-          fieldOfStudy: "",
+          institution: "",
           startDate: "",
           endDate: "",
-          description: "",
         },
       ],
       skills: [
         {
-          skillName: "",
-          proficiency: 0,
+          name: "",
+          progress: 0,
         },
       ],
       projects: [
         {
-          projectName: "",
+          title: "",
           description: "",
           github: "",
           liveDemo: "",
@@ -59,16 +58,15 @@ export const createResume = async (req, res) => {
       ],
       certifications: [
         {
-          certificationName: "",
-          issuingOrganization: "",
-          issueDate: "",
-          expirationDate: "",
+          title: "",
+          issuer: "",
+          year: "",
         },
       ],
       languages: [
         {
-          languageName: "",
-          proficiency: "",
+          name: "",
+          progress: 0,
         },
       ],
       interests: [],
