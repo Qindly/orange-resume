@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { authStyles as styles } from "../assets/dummystyle";
-import { validateEmail } from "../utils/helper";
+import { validateEmail } from "../utils/helpers";
 import axiosInstance from "../utils/axiosInstance";
 import { API_PATHS } from "../utils/apiPaths";
 import Input from "./Input";

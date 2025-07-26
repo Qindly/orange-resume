@@ -2,13 +2,14 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { cardStyles } from "../assets/dummystyle.js";
-import { 
-    Award, 
-    TrendingUp, 
-    Zap, 
-    Edit,
-    Trash2,
-    Clock 
+import {
+  Award,
+  TrendingUp,
+  Zap,
+  Edit,
+  Trash2,
+  Clock,
+  Check,
 } from "lucide-react";
 export const ProfileInfoCard = () => {
   const navigate = useNavigate();
@@ -50,18 +51,18 @@ export const ResumeSummaryCard = ({
 
   const formattedCreatedDate = createdAt
     ? new Date(createdAt).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
     : "—";
 
   const formattedUpdatedDate = updatedAt
     ? new Date(updatedAt).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
     : "—";
 
   const getCompletionColor = () => {
@@ -87,7 +88,7 @@ export const ResumeSummaryCard = ({
       "from-purple-50 to-purple-100",
       "from-emerald-50 to-emerald-100",
       "from-amber-50 to-amber-100",
-      "from-rose-50 to-rose-100"
+      "from-rose-50 to-rose-100",
     ];
     return colors[title.length % colors.length];
   };
@@ -103,15 +104,23 @@ export const ResumeSummaryCard = ({
     >
       {/* Completion indicator */}
       <div className={cardStyles.completionIndicator}>
-        <div className={`${cardStyles.completionDot} bg-gradient-to-r ${getCompletionColor()}`}>
+        <div
+          className={`${
+            cardStyles.completionDot
+          } bg-gradient-to-r ${getCompletionColor()}`}
+        >
           <div className={cardStyles.completionDotInner} />
         </div>
-        <span className={cardStyles.completionPercentageText}>{completion}%</span>
+        <span className={cardStyles.completionPercentageText}>
+          {completion}%
+        </span>
         {getCompletionIcon()}
       </div>
 
       {/* Preview area */}
-      <div className={`${cardStyles.previewArea} bg-gradient-to-br ${designColor}`}>
+      <div
+        className={`${cardStyles.previewArea} bg-gradient-to-br ${designColor}`}
+      >
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <div className={cardStyles.emptyPreviewIcon}>
             <Edit size={28} className="text-indigo-600" />
@@ -123,13 +132,14 @@ export const ResumeSummaryCard = ({
 
           {/* Mini resume sections indicator */}
           <div className="mt-4 flex gap-2">
-            {['Profile', 'Work', 'Skills', 'Edu'].map((section, i) => (
+            {["Profile", "Work", "Skills", "Edu"].map((section, i) => (
               <div
                 key={i}
-                className={`px-2 py-1 text-xs rounded-md ${i < Math.floor(completion / 25)
-                  ? 'bg-white/90 text-indigo-600 font-medium'
-                  : 'bg-white/50 text-gray-500'
-                  }`}
+                className={`px-2 py-1 text-xs rounded-md ${
+                  i < Math.floor(completion / 25)
+                    ? "bg-white/90 text-indigo-600 font-medium"
+                    : "bg-white/50 text-gray-500"
+                }`}
               >
                 {section}
               </div>
@@ -193,11 +203,61 @@ export const ResumeSummaryCard = ({
         {/* Completion status */}
         <div className="flex justify-between items-center mt-2">
           <span className="text-xs font-medium text-gray-500">
-            {completion < 50 ? "Getting Started" : completion < 80 ? "Almost There" : "Ready to Go!"}
+            {completion < 50
+              ? "Getting Started"
+              : completion < 80
+              ? "Almost There"
+              : "Ready to Go!"}
           </span>
-          <span className="text-xs font-bold text-gray-700">{completion}% Complete</span>
+          <span className="text-xs font-bold text-gray-700">
+            {completion}% Complete
+          </span>
         </div>
       </div>
+    </div>
+  );
+};
+
+//template card
+export const TemplateCard = ({ thumbnailImg, isSelected, onSelect }) => {
+  return (
+    <div
+      className={`group h-auto md:h-[300px] lg:h-[320px] flex flex-col bg-white border-2 overflow-hidden
+    cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-lg rounded-3xl ${
+      isSelected
+        ? "border-violet-500 shadow-lg shadow-violet-500/20 bg-amber-50"
+        : "border-gray-200 hover:border-violet-300"
+    } `}
+      onClick={onSelect}
+    >
+      {thumbnailImg ? (
+        <div className="relative w-full h-full overflow-hidden">
+          <img
+            src={thumbnailImg || "/placeholder.svg"}
+            alt="Template Review"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-white/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            {isSelected && (
+              <div className="absolute inset-0 bg-violet-500/10 flex items-center justify-center ">
+                <div className="w-16 h-16 bg-white backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                  <Check size={24} className="text-violet-600" />
+                </div>
+              </div>
+            )}
+
+            {/* hover特效 */}
+            <div className="absolute inset-0 bg-gradient-to-t from-violet-100/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </div>
+        </div>
+      ) : (
+        <div className=" w-full h-[200px] flex items-center flex-col justify-center bg-gradient-to-br from-violet-50 via-violet-600 to-fuchsia-50">
+          <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-2xl flex items-center justify-center mb-3">
+            <Edit className="text-white" size={20} />
+          </div>
+          <span className="text-gray-700 font-bold">No Preview</span>
+        </div>
+      )}
     </div>
   );
 };

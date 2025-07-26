@@ -27,8 +27,8 @@ const CreateResumeForm = ({ onSuccess }) => {
       if (response.data?.newResume?._id) {
         toast.success("Resume created successfully!");
         onSuccess();
-        navigate('/dashboard');
-        // navigate(`/resume/${response.data.newResume._id}`);
+        // navigate('/dashboard');
+        navigate(`/resume/${response.data.newResume._id}`);
       }
     } catch (err) {
       if (err.response?.data?.message) {

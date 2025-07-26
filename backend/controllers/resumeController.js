@@ -21,7 +21,7 @@ export const createResume = async (req, res) => {
       contactInfo: {
         email: "",
         phone: "",
-        loacation: "",
+        location: "",
         website: "",
         linkedin: "",
         github: "",
@@ -140,14 +140,11 @@ export const updateResume = async (req, res) => {
 };
 
 export const deleteResume = async (req, res) => {
-  // console.log("in d1111eleteResume");
   try {
-    // console.log("in deleteResume");
     const resume = await Resume.findOneAndDelete({
       _id: req.params.id,
       userId: req.user._id,
     });
-    // console.log("resume",resume);
     
     if (!resume) {
       return res
@@ -171,15 +168,14 @@ export const deleteResume = async (req, res) => {
     }
     if (resume.profileInfo?.profilePreviewUrl) {
       const oldProfile = path.join(
-        uploadsFolder,
+        process.cwd(),
+        "uploads",
         path.basename(resume.profileInfo.profilePreviewUrl)
       );
       if (fs.existsSync(oldProfile)) {
         fs.unlinkSync(oldProfile);
       }
     }
-
-
 
     res.json({ message: "Resume deleted successfully" });
   } catch (error) {

@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
-import { validateEmail } from "../utils/helper";
+import { validateEmail } from "../utils/helpers";
 import { API_PATHS } from "../utils/apiPaths";
 import Input from "./Input";  
 import SignUp from "./SignUp";
