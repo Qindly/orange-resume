@@ -96,7 +96,7 @@ const Dashboard = () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(API_PATHS.RESUME.GET_ALL);
-      const resumesWithCompletion = response.data.map((resume) => ({
+      const resumesWithCompletion = response.data.resumes?.map((resume) => ({
         ...resume,
         completion: calculateCompletion(resume),
       }));

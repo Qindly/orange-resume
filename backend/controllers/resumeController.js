@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 
 export const createResume = async (req, res) => {
+  console.log("in create")
   try {
     const { title } = req.body;
     const defaultResumeData = {
@@ -139,11 +140,15 @@ export const updateResume = async (req, res) => {
 };
 
 export const deleteResume = async (req, res) => {
+  // console.log("in d1111eleteResume");
   try {
+    // console.log("in deleteResume");
     const resume = await Resume.findOneAndDelete({
       _id: req.params.id,
       userId: req.user._id,
     });
+    // console.log("resume",resume);
+    
     if (!resume) {
       return res
         .status(404)
@@ -174,13 +179,7 @@ export const deleteResume = async (req, res) => {
       }
     }
 
-    const deleted=await Resume.findOneAndDelete({
-        _id:req.params.id,
-        userId:req.user._id,
-    })
-    if (!deleted) {
-      return res.status(404).json({message: "Resume not found or you do not have permission to delete it",});
-    }
+
 
     res.json({ message: "Resume deleted successfully" });
   } catch (error) {

@@ -22,7 +22,7 @@ const EditResume = () => {
                         <Palette size={16} />
                         <span className='text-sm'>Theme</span>
                     </button>
-                    <button onC >
+                    <button >
 
                     </button>
 

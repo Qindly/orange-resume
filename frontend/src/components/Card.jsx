@@ -2,7 +2,14 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { cardStyles } from "../assets/dummystyle.js";
-
+import { 
+    Award, 
+    TrendingUp, 
+    Zap, 
+    Edit,
+    Trash2,
+    Clock 
+} from "lucide-react";
 export const ProfileInfoCard = () => {
   const navigate = useNavigate();
   const { user, clearUser } = useContext(UserContext);

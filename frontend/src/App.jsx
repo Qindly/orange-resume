@@ -5,6 +5,7 @@ import UserProvider from "./context/UserContext.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import { User } from "lucide-react";
 import { Toaster } from "react-hot-toast";
+import EditResume from "./components/EditResume.jsx";
 const App = () => {
   return (
     <UserProvider>

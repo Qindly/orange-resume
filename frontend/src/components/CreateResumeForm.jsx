@@ -3,8 +3,9 @@ import Input from "../components/Input";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import { API_PATHS } from "../utils/apiPaths";
+import toast from "react-hot-toast";
 
-const CreateResumeForm = () => {
+const CreateResumeForm = ({ onSuccess }) => {
   const [title, setTitle] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const CreateResumeForm = () => {
     e.preventDefault();
     if (!title) {
       setError("Title is required");
+      toast.error("Please enter a resume title");
       return;
     }
     setError("");
@@ -21,14 +23,22 @@ const CreateResumeForm = () => {
       const response = await axiosInstance.post(API_PATHS.RESUME.CREATE, {
         title,
       });
-      if (response.data?._id) {
-        navigate(`/resume/${response.data?._id}`);
+      console.log("response:", response);
+      if (response.data?.newResume?._id) {
+        toast.success("Resume created successfully!");
+        onSuccess();
+        navigate('/dashboard');
+        // navigate(`/resume/${response.data.newResume._id}`);
       }
     } catch (err) {
       if (err.response?.data?.message) {
-        setError(err.response?.data?.message);
+        const errorMessage = err.response.data.message;
+        setError(errorMessage);
+        toast.error(errorMessage);
       } else {
-        setError("An error occurred while creating the resume");
+        const errorMessage = "An error occurred while creating the resume";
+        setError(errorMessage);
+        toast.error(errorMessage);
       }
     }
   };
