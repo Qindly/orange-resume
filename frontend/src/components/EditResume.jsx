@@ -1,5 +1,5 @@
 // 1. 先导入 React 相关
-import { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // 2. 导入第三方库
@@ -12,15 +12,23 @@ import {
   Trash2,
   Check,
   Loader2,
+  Eye,
+  Edit,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import html2pdf from "html2pdf.js";
+import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 
 // 3. 导入本地组件
-import DashboardLayout from "../components/DashboardLayout";
-import { TitleInput } from "../components/Input";
+import DashboardLayout from "./DashboardLayout";
+import { TitleInput } from "./Input";
+import RenderResume from "./RenderResume";
+import StepProgress from "./StepProgress";
+import Modal from "./Modal";
+import ThemeSelector from "./ThemeSelector";
+import axiosInstance from "../utils/axiosInstance";
 
+// Forms
 import {
   AdditionalInfoForm,
   CertificationInfoForm,
@@ -30,30 +38,33 @@ import {
   ProjectDetailForm,
   SkillsInfoForm,
   WorkExperienceForm,
-} from "./Form";
+} from "./Form"; // 注意这里改为 Forms 目录
 
 // 4. 导入工具和样式
-import axiosInstance from "../utils/axiosInstance";
 import { API_PATHS } from "../utils/apiPaths";
 import { fixTailwindColors } from "../utils/colors";
 import { captureElementAsImage, dataURLtoFile } from "../utils/helpers";
 import {
   containerStyles,
   buttonStyles,
-
+  statusStyles,
+  iconStyles,
 } from "../assets/dummystyle";
-// import "./A4.css";
+import "./A4.css";
 
 // 调整观看大小的hook
 const useResizeObserver = () => {
-  const [size, setSize] = useState({ with: 0, height: 0 });
+  const [size, setSize] = useState({ width: 0, height: 0 });
   const ref = useCallback((node) => {
     if (node) {
-      const ResizeObserver = new ResizeObserver((entries) => {
+      const observer = new ResizeObserver((entries) => {
         const { width, height } = entries[0].contentReact;
         setSize({ size, height });
       });
-      ResizeObserver.observe(node);
+      observer.observe(node);
+      return () => {
+        observer.disconnect();
+      };
     }
   }, []);
   return { ...size, ref };
@@ -143,7 +154,8 @@ const EditResume = () => {
     ],
     interests: [""],
   });
-
+  console.log("resumeData:", resumeData);
+  console.log("resumeData?.template?.theme", resumeData?.template?.theme);
   // Calculate completion percentage
   const calculateCompletion = () => {
     let completedFields = 0;
@@ -770,7 +782,159 @@ const EditResume = () => {
             </button>
           </div>
         </div>
+
+        {/* step progress */}
+        <div className={containerStyles.grid}>
+          <div className={containerStyles.formContainer}>
+            <StepProgress progress={progress} />
+            {renderForm()}
+            <div className="p-4 sm:p-6">
+              {errorMsg && (
+                <div className={statusStyles.error}>
+                  <AlertCircle size={16} />
+                  {errorMsg}
+                </div>
+              )}
+              <div className="flex flex-wrap items-center justify-end gap-3">
+                <button
+                  className={buttonStyles.back}
+                  onClick={goBack}
+                  disabled={isLoading}
+                >
+                  <ArrowLeft size={16} />
+                  <span>Back</span>
+                </button>
+                <button
+                  className={buttonStyles.save}
+                  onClick={uploadResumeImages}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Save size={16} />
+                  )}
+                  {isLoading ? "Saving..." : "Save & Exit"}
+                </button>
+
+                <button
+                  className={buttonStyles.next}
+                  onClick={validateAndNext}
+                  disabled={isLoading}
+                >
+                  {currentPage === "additionalInfo" && <Download size={16} />}
+                  {currentPage === "additionalInfo"
+                    ? "Preview & Download"
+                    : "Next"}
+                  {currentPage === "additionalInfo" && (
+                    <ArrowLeft size={16} className="rotate-100" />
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="hidden lg:block">
+            <div className={containerStyles.previewContainer}>
+              <div className="text-center mb-4">
+                <div className={statusStyles.completionBadge}>
+                  <div className={iconStyles.pulseDot}></div>
+                  <span>Preview - {completionPercentage}% Complete</span>
+                </div>
+              </div>
+
+              <div
+                className="preview-container relative"
+                ref={previewContainerRef}
+              >
+                <div className={containerStyles.previewInner}>
+                  <RenderResume
+                    key={`preview-${resumeData?.template?.theme}`}
+                    templateId={resumeData?.template?.theme || ""}
+                    resumeData={resumeData}
+                    containerWidth={previewWidth}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* modal data here */}
+      <Modal
+        isOpen={openThemeSelector}
+        onClose={() => setOpenThemeSelector(false)}
+        title="Change Title"
+      >
+        <div className={containerStyles.modalContent}>
+          <ThemeSelector
+            selectedTheme={resumeData?.template.theme}
+            setSelectedTheme={updateTheme}
+            onClose={() => setOpenThemeSelector(false)}
+          />
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={openPreviewModal}
+        onClose={() => setOpenPreviewModal(false)}
+        title={resumeData.title}
+        showActionBtn
+        actionBtnText={
+          isDownloading
+            ? "Generating..."
+            : downloadSuccess
+            ? "Downloaded"
+            : "Download PDF"
+        }
+        actionBtnIcon={
+          isDownloading ? (
+            <Loader2 size={16} className="animate-spin" />
+          ) : downloadSuccess ? (
+            <Check size={16} className="text-white" />
+          ) : (
+            <Download size={16} />
+          )
+        }
+        onActionClick={downloadPDF}
+      >
+        <div className="relative">
+          <div className="text-center mb-4">
+            <div className={statusStyles.modalBadge}>
+              <div className={iconStyles.pulseDot}></div>
+              <span>Completion:{completionPercentage}%</span>
+            </div>
+          </div>
+
+          <div className={containerStyles.pdfPreview}>
+            <div ref={resumeDownloadRef} className="a4-wrapper">
+              <div className="w-full h-full">
+                <RenderResume
+                  key={`pdf-${resumeData?.template?.theme}`}
+                  templateId={resumeData?.template?.theme || ""}
+                  resumeData={resumeData}
+                  containerWidth={null}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      {/* now thumnail error fix */}
+      <div style ={{display:"none"}} ref={thumbnailRef}>
+        <div className={containerStyles.hiddenThumbnail}>
+          <RenderResume
+            key={`thumbnail-${resumeData?.template?.theme}`}
+            templateId={resumeData?.template?.theme || ""}
+            resumeData={resumeData}
+        
+          />
+        </div>
+
+      </div>
+
     </DashboardLayout>
   );
 };

@@ -1,7 +1,12 @@
 import React from "react";
+import TemplateOne from "./TemplateOne";
+import TemplateTwo from "./TemplateTwo";
+import TemplateThree from "./TemplateThree";
 
-const RenderResume = ({ templatedId, resumeData, containerWidth }) => {
-  switch (templatedId) {
+const RenderResume = ({ templateId, resumeData, containerWidth }) => {
+  console.log("templatedId", templateId);
+  console.log("RenderResume:resumeData", resumeData);
+  switch (templateId) {
     case "01":
       return (
         <TemplateOne resumeData={resumeData} containerWidth={containerWidth} />

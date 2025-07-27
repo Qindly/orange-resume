@@ -7,7 +7,7 @@ import {
   ProjectInfo,
   CertificationInfo,
 } from "./ResumeSection";
-import { formatYearMonth } from "../utils/helper";
+import { formatYearMonth } from "../utils/helpers";
 
 const DEFAULT_THEME = ["#ffffff", "#0d47a1", "#1e88e5", "#64b5f6", "#bbdefb"];
 

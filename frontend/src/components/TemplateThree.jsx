@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { formatYearMonth } from "../utils/helper";
+import { formatYearMonth } from "../utils/helpers";
 
 const TemplateThree = ({ resumeData = {}, containerWidth }) => {
   const {

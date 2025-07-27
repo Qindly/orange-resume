@@ -1,7 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { Check } from "lucide-react";
 import { DUMMY_RESUME_DATA, resumeTemplates } from "../utils/data";
 import { TemplateCard } from "./Card";
 import RenderResume from "./RenderResume";
+import Tabs from "./Tabs";
 
 const TAB_DATA = [{ label: "Templates" }];
 
@@ -21,6 +23,10 @@ const ThemeSelector = ({
   });
 
   const [tabValue, setTabValue] = useState("Templates");
+  console.log("selectedTemplate", selectedTemplate);
+  const setActiveTab = (tab) => {
+    setTabValue(tab);
+  };
 
   const handleThemeSelection = () => {
     setSelectedTheme(selectedTemplate.theme);
@@ -33,6 +39,14 @@ const ThemeSelector = ({
     }
   };
 
+  useEffect(() => {
+    updateBaseWitdh();
+    window.addEventListener("resize", updateBaseWitdh);
+    return () => {
+      window.removeEventListener("resize", updateBaseWitdh);
+    };
+  }, []);
+
   return (
     <div className="max-w-7xl mx-auto px-4">
       <div
@@ -44,9 +58,10 @@ const ThemeSelector = ({
           className="w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-3 bg-gradient-to-r from-violet-600
         to-fuchsia-600 text-white font-black rounded-2xl hover:scale-105 transition-all shadow-lg hover:shadow-xl"
           onClick={handleThemeSelection}
-        />
-        <Check size={18} />
-        Apply Changes
+        >
+          <Check size={18} />
+          Apply Changes
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
@@ -68,7 +83,6 @@ const ThemeSelector = ({
           </div>
         </div>
 
-        {/* 右边展示部分 */}
         <div
           className="lg:col-span-3 bg-white rounded-2xl border border-gray-100 p-4 sm:p-6"
           ref={resumeRef}
