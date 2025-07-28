@@ -3,7 +3,6 @@ import fs from "fs";
 import path from "path";
 
 export const createResume = async (req, res) => {
-  console.log("in create")
   try {
     const { title } = req.body;
     const defaultResumeData = {

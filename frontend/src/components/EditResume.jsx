@@ -16,8 +16,8 @@ import {
   Edit,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import html2pdf from "html2pdf.js";
 
 // 3. 导入本地组件
 import DashboardLayout from "./DashboardLayout";
@@ -43,7 +43,7 @@ import {
 // 4. 导入工具和样式
 import { API_PATHS } from "../utils/apiPaths";
 import { fixTailwindColors } from "../utils/colors";
-import { captureElementAsImage, dataURLtoFile } from "../utils/helpers";
+import { dataURLtoFile } from "../utils/helpers";
 import {
   containerStyles,
   buttonStyles,
@@ -55,10 +55,11 @@ import "./A4.css";
 // 调整观看大小的hook
 const useResizeObserver = () => {
   const [size, setSize] = useState({ width: 0, height: 0 });
+
   const ref = useCallback((node) => {
     if (node) {
       const observer = new ResizeObserver((entries) => {
-        const { width, height } = entries[0].contentReact;
+        const { width, height } = entries[0].contentRect;
         setSize({ size, height });
       });
       observer.observe(node);
@@ -154,8 +155,6 @@ const EditResume = () => {
     ],
     interests: [""],
   });
-  console.log("resumeData:", resumeData);
-  console.log("resumeData?.template?.theme", resumeData?.template?.theme);
   // Calculate completion percentage
   const calculateCompletion = () => {
     let completedFields = 0;
@@ -242,22 +241,24 @@ const EditResume = () => {
     const errors = [];
 
     switch (currentPage) {
-      case "profile-info":
+      case "profile-info": {
         const { fullName, designation, summary } = resumeData.profileInfo;
         if (!fullName.trim()) errors.push("Full Name is required");
         if (!designation.trim()) errors.push("Designation is required");
         if (!summary.trim()) errors.push("Summary is required");
         break;
+      }
 
-      case "contact-info":
+      case "contact-info": {
         const { email, phone } = resumeData.contactInfo;
         if (!email.trim() || !/^\S+@\S+\.\S+$/.test(email))
           errors.push("Valid email is required.");
         if (!phone.trim() || !/^\d{10}$/.test(phone))
           errors.push("Valid 10-digit phone number is required");
         break;
+      }
 
-      case "work-experience":
+      case "work-experience": {
         resumeData.workExperience.forEach(
           ({ company, role, startDate, endDate }, index) => {
             if (!company || !company.trim())
@@ -271,8 +272,9 @@ const EditResume = () => {
           }
         );
         break;
+      }
 
-      case "education-info":
+      case "education-info": {
         resumeData.education.forEach(
           ({ degree, institution, startDate, endDate }, index) => {
             if (!degree.trim())
@@ -286,8 +288,9 @@ const EditResume = () => {
           }
         );
         break;
+      }
 
-      case "skills":
+      case "skills": {
         resumeData.skills.forEach(({ name, progress }, index) => {
           if (!name.trim())
             errors.push(`Skill name is required in skill ${index + 1}`);
@@ -297,8 +300,9 @@ const EditResume = () => {
             );
         });
         break;
+      }
 
-      case "projects":
+      case "projects": {
         resumeData.projects.forEach(({ title, description }, index) => {
           if (!title.trim())
             errors.push(`Project Title is required in project ${index + 1}`);
@@ -308,8 +312,9 @@ const EditResume = () => {
             );
         });
         break;
+      }
 
-      case "certifications":
+      case "certifications": {
         resumeData.certifications.forEach(({ title, issuer }, index) => {
           if (!title.trim())
             errors.push(
@@ -319,8 +324,9 @@ const EditResume = () => {
             errors.push(`Issuer is required in certification ${index + 1}`);
         });
         break;
+      }
 
-      case "additionalInfo":
+      case "additionalInfo": {
         if (
           resumeData.languages.length === 0 ||
           !resumeData.languages[0].name?.trim()
@@ -334,6 +340,7 @@ const EditResume = () => {
           errors.push("At least one interest is required");
         }
         break;
+      }
 
       default:
         break;
@@ -738,7 +745,7 @@ const EditResume = () => {
     if (resumeId) {
       fetchResumeDetailsById();
     }
-  }, [resumeId]);
+  }, [resumeId,fetchResumeDetailsById]);
 
   return (
     <DashboardLayout>
@@ -923,18 +930,15 @@ const EditResume = () => {
       </Modal>
 
       {/* now thumnail error fix */}
-      <div style ={{display:"none"}} ref={thumbnailRef}>
+      <div style={{ display: "none" }} ref={thumbnailRef}>
         <div className={containerStyles.hiddenThumbnail}>
           <RenderResume
             key={`thumbnail-${resumeData?.template?.theme}`}
             templateId={resumeData?.template?.theme || ""}
             resumeData={resumeData}
-        
           />
         </div>
-
       </div>
-
     </DashboardLayout>
   );
 };

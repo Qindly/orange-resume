@@ -23,7 +23,6 @@ const CreateResumeForm = ({ onSuccess }) => {
       const response = await axiosInstance.post(API_PATHS.RESUME.CREATE, {
         title,
       });
-      console.log("response:", response);
       if (response.data?.newResume?._id) {
         toast.success("Resume created successfully!");
         onSuccess();

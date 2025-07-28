@@ -23,7 +23,6 @@ const ThemeSelector = ({
   });
 
   const [tabValue, setTabValue] = useState("Templates");
-  console.log("selectedTemplate", selectedTemplate);
   const setActiveTab = (tab) => {
     setTabValue(tab);
   };

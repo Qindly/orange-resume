@@ -25,7 +25,7 @@ export const uploadResumeImages =async (req,res)=>{
       const newThumbnail= req.files.thumbnail?.[0];
       const newProfileImage = req.files.profileImage?.[0];
 
-      if(newThumbail)
+      if(newThumbnail)
       {
        if(resume.thumbnailLink){
         const oldThumbnail=path.join(uploadsFloder,path.basename(resume.thumbnailLink));
