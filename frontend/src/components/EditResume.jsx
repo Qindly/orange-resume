@@ -1,6 +1,7 @@
 // 1. 先导入 React 相关
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import TemplateOne from "./TemplateOne";
 
 // 2. 导入第三方库
 import {
@@ -22,10 +23,9 @@ import html2pdf from "html2pdf.js";
 // 3. 导入本地组件
 import DashboardLayout from "./DashboardLayout";
 import { TitleInput } from "./Input";
-import RenderResume from "./RenderResume";
+
 import StepProgress from "./StepProgress";
 import Modal from "./Modal";
-import ThemeSelector from "./ThemeSelector";
 import axiosInstance from "../utils/axiosInstance";
 
 // Forms
@@ -56,18 +56,21 @@ import "./A4.css";
 const useResizeObserver = () => {
   const [size, setSize] = useState({ width: 0, height: 0 });
 
-  const ref = useCallback((node) => {
-    if (node) {
-      const observer = new ResizeObserver((entries) => {
-        const { width, height } = entries[0].contentRect;
-        setSize({ size, height });
-      });
-      observer.observe(node);
-      return () => {
-        observer.disconnect();
-      };
-    }
-  }, []);
+  const ref = useCallback(
+    (node) => {
+      if (node) {
+        const observer = new ResizeObserver((entries) => {
+          const { height } = entries[0].contentRect;
+          setSize({ size, height });
+        });
+        observer.observe(node);
+        return () => {
+          observer.disconnect();
+        };
+      }
+    },
+    [size]
+  );
   return { ...size, ref };
 };
 
@@ -77,7 +80,6 @@ const EditResume = () => {
   const resumeDownloadRef = useRef(null);
   const thumbnailRef = useRef(null);
 
-  const [openThemeSelector, setOpenThemeSelector] = useState(false);
   const [openPreviewModal, setOpenPreviewModal] = useState(false);
   const [currentPage, setCurrentPage] = useState("profile-info");
   const [progress, setProgress] = useState(0);
@@ -237,7 +239,7 @@ const EditResume = () => {
   }, [resumeData]);
 
   // Validate Inputs
-  const validateAndNext = (e) => {
+  const validateAndNext = () => {
     const errors = [];
 
     switch (currentPage) {
@@ -560,7 +562,7 @@ const EditResume = () => {
     });
   };
 
-  const fetchResumeDetailsById = async () => {
+  const fetchResumeDetailsById = useCallback(async () => {
     try {
       const response = await axiosInstance.get(
         API_PATHS.RESUME.GET_BY_ID(resumeId)
@@ -590,7 +592,7 @@ const EditResume = () => {
       console.error("Error fetching resume:", error);
       toast.error("Failed to load resume data");
     }
-  };
+  }, [resumeId]);
 
   const uploadResumeImages = async () => {
     try {
@@ -731,21 +733,11 @@ const EditResume = () => {
     }
   };
 
-  const updateTheme = (theme) => {
-    setResumeData((prev) => ({
-      ...prev,
-      template: {
-        theme: theme,
-        colorPalette: [],
-      },
-    }));
-  };
-
   useEffect(() => {
     if (resumeId) {
       fetchResumeDetailsById();
     }
-  }, [resumeId,fetchResumeDetailsById]);
+  }, [resumeId, fetchResumeDetailsById]);
 
   return (
     <DashboardLayout>
@@ -762,14 +754,6 @@ const EditResume = () => {
           />
 
           <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={() => setOpenThemeSelector(true)}
-              className={buttonStyles.theme}
-            >
-              <Palette size={16} />
-              <span className="text-sm">Theme</span>
-            </button>
-
             <button
               onClick={handleDeleteResume}
               className={buttonStyles.delete}
@@ -855,9 +839,8 @@ const EditResume = () => {
                 ref={previewContainerRef}
               >
                 <div className={containerStyles.previewInner}>
-                  <RenderResume
+                  <TemplateOne
                     key={`preview-${resumeData?.template?.theme}`}
-                    templateId={resumeData?.template?.theme || ""}
                     resumeData={resumeData}
                     containerWidth={previewWidth}
                   />
@@ -867,21 +850,6 @@ const EditResume = () => {
           </div>
         </div>
       </div>
-
-      {/* modal data here */}
-      <Modal
-        isOpen={openThemeSelector}
-        onClose={() => setOpenThemeSelector(false)}
-        title="Change Title"
-      >
-        <div className={containerStyles.modalContent}>
-          <ThemeSelector
-            selectedTheme={resumeData?.template.theme}
-            setSelectedTheme={updateTheme}
-            onClose={() => setOpenThemeSelector(false)}
-          />
-        </div>
-      </Modal>
 
       <Modal
         isOpen={openPreviewModal}
@@ -917,9 +885,8 @@ const EditResume = () => {
           <div className={containerStyles.pdfPreview}>
             <div ref={resumeDownloadRef} className="a4-wrapper">
               <div className="w-full h-full">
-                <RenderResume
+                <TemplateOne
                   key={`pdf-${resumeData?.template?.theme}`}
-                  templateId={resumeData?.template?.theme || ""}
                   resumeData={resumeData}
                   containerWidth={null}
                 />
@@ -932,9 +899,8 @@ const EditResume = () => {
       {/* now thumnail error fix */}
       <div style={{ display: "none" }} ref={thumbnailRef}>
         <div className={containerStyles.hiddenThumbnail}>
-          <RenderResume
+          <TemplateOne
             key={`thumbnail-${resumeData?.template?.theme}`}
-            templateId={resumeData?.template?.theme || ""}
             resumeData={resumeData}
           />
         </div>

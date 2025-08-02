@@ -8,16 +8,7 @@ export const resumeTemplates = [
         thumbnailImg: Resume1,
         colorPaletteCode: "themeOne"
     },
-    {
-        id: "02",
-        thumbnailImg: Resume2,
-        colorPaletteCode: "themeTwo"
-    },
-    {
-        id: "03",
-        thumbnailImg: Resume3,
-        colorPaletteCode: "themeThree"
-    },
+
 ]
 
 export const DUMMY_RESUME_DATA = {
