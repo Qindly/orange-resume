@@ -4,7 +4,6 @@ import { UserContext } from "../context/UserContext";
 import { validateEmail } from "../utils/helpers";
 import { API_PATHS } from "../utils/apiPaths";
 import Input from "./Input";  
-import SignUp from "./SignUp";
 import axiosInstance from "../utils/axiosInstance";
 
 import { authStyles as styles } from "../assets/dummystyle";

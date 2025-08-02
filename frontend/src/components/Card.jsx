@@ -11,6 +11,8 @@ import {
   Clock,
   Check,
 } from "lucide-react";
+
+
 export const ProfileInfoCard = () => {
   const navigate = useNavigate();
   const { user, clearUser } = useContext(UserContext);
