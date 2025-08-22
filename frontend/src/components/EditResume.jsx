@@ -1,5 +1,6 @@
+// 编辑简历的主要内容，实现左边右边的同步更新
 // 1. 先导入 React 相关
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import TemplateOne from "./TemplateOne";
 
@@ -87,7 +88,7 @@ const EditResume = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [completionPercentage, setCompletionPercentage] = useState(0);
+  // const [completionPercentage, setCompletionPercentage] = useState(0);
 
   const { width: previewWidth, ref: previewContainerRef } = useResizeObserver();
 
@@ -157,8 +158,9 @@ const EditResume = () => {
     ],
     interests: [""],
   });
+
   // Calculate completion percentage
-  const calculateCompletion = () => {
+  const completionPercentage = useMemo(() => {
     let completedFields = 0;
     let totalFields = 0;
 
@@ -230,13 +232,13 @@ const EditResume = () => {
     ).length;
 
     const percentage = Math.round((completedFields / totalFields) * 100);
-    setCompletionPercentage(percentage);
-    return percentage;
-  };
-
-  useEffect(() => {
-    calculateCompletion();
+    return isNaN(percentage) ? 0 : percentage;
   }, [resumeData]);
+
+
+  // useEffect(() => {
+  //   calculateCompletion();
+  // }, [resumeData]);
 
   // Validate Inputs
   const validateAndNext = () => {
@@ -407,7 +409,168 @@ const EditResume = () => {
     }
   };
 
-  const renderForm = () => {
+
+
+  const updateSection = useCallback((section, key, value) => {
+    setResumeData((prev) => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [key]: value,
+      },
+    }));
+  }, []);
+
+  const updateArrayItem = useCallback((section, index, key, value) => {
+    setResumeData((prev) => {
+      const updatedArray = [...prev[section]];
+
+      if (key === null) {
+        updatedArray[index] = value;
+      } else {
+        updatedArray[index] = {
+          ...updatedArray[index],
+          [key]: value,
+        };
+      }
+
+      return {
+        ...prev,
+        [section]: updatedArray,
+      };
+    });
+  }, []);
+
+  const addArrayItem = useCallback((section, newItem) => {
+    setResumeData((prev) => ({
+      ...prev,
+      [section]: [...prev[section], newItem],
+    }));
+  }, []);
+
+  const removeArrayItem = useCallback((section, index) => {
+    setResumeData((prev) => {
+      const updatedArray = [...prev[section]];
+      updatedArray.splice(index, 1);
+      return {
+        ...prev,
+        [section]: updatedArray,
+      };
+    });
+  }, []);
+
+  const fetchResumeDetailsById = useCallback(async () => {
+    try {
+      const response = await axiosInstance.get(
+        API_PATHS.RESUME.GET_BY_ID(resumeId)
+      );
+
+      if (response.data && response.data.profileInfo) {
+        const resumeInfo = response.data;
+
+        setResumeData((prevState) => ({
+          ...prevState,
+          title: resumeInfo?.title || "Untitled",
+          template: resumeInfo?.template || prevState?.template,
+          profileInfo: resumeInfo?.profileInfo || prevState?.profileInfo,
+          contactInfo: resumeInfo?.contactInfo || prevState?.contactInfo,
+          workExperience:
+            resumeInfo?.workExperience || prevState?.workExperience,
+          education: resumeInfo?.education || prevState?.education,
+          skills: resumeInfo?.skills || prevState?.skills,
+          projects: resumeInfo?.projects || prevState?.projects,
+          certifications:
+            resumeInfo?.certifications || prevState?.certifications,
+          languages: resumeInfo?.languages || prevState?.languages,
+          interests: resumeInfo?.interests || prevState?.interests,
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching resume:", error);
+      toast.error("Failed to load resume data");
+    }
+  }, [resumeId]);
+
+  const uploadResumeImages = useCallback(async () => {
+    try {
+      setIsLoading(true);
+
+      const thumbnailElement = thumbnailRef.current;
+      if (!thumbnailElement) {
+        throw new Error("Thumbnail element not found");
+      }
+
+      const fixedThumbnail = fixTailwindColors(thumbnailElement);
+
+      const thumbnailCanvas = await html2canvas(fixedThumbnail, {
+        scale: 0.5,
+        backgroundColor: "#FFFFFF",
+        logging: false,
+      });
+
+      document.body.removeChild(fixedThumbnail);
+
+      const thumbnailDataUrl = thumbnailCanvas.toDataURL("image/png");
+      const thumbnailFile = dataURLtoFile(
+        thumbnailDataUrl,
+        `thumbnail-${resumeId}.png`
+      );
+
+      const formData = new FormData();
+      formData.append("thumbnail", thumbnailFile);
+
+      const uploadResponse = await axiosInstance.put(
+        API_PATHS.RESUME.UPLOAD_IMAGES(resumeId),
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      const { thumbnailLink } = uploadResponse.data;
+      await updateResumeDetails(thumbnailLink);
+
+      toast.success("Resume Updated Successfully");
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error Uploading Images:", error);
+      toast.error("Failed to upload images");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const updateResumeDetails = useCallback(async (thumbnailLink) => {
+    try {
+      setIsLoading(true);
+
+      await axiosInstance.put(API_PATHS.RESUME.UPDATE(resumeId), {
+        ...resumeData,
+        thumbnailLink: thumbnailLink || "",
+        completion: completionPercentage,
+      });
+    } catch (err) {
+      console.error("Error updating resume:", err);
+      toast.error("Failed to update resume details");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const handleDeleteResume = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      await axiosInstance.delete(API_PATHS.RESUME.DELETE(resumeId));
+      toast.success("Resume deleted successfully");
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error deleting resume:", error);
+      toast.error("Failed to delete resume");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+  const memoizedForm = useMemo(() => {
     switch (currentPage) {
       case "profile-info":
         return (
@@ -512,169 +675,9 @@ const EditResume = () => {
       default:
         return null;
     }
-  };
+  }, [currentPage, resumeData, updateSection, updateArrayItem, addArrayItem, removeArrayItem]);
 
-  const updateSection = (section, key, value) => {
-    setResumeData((prev) => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [key]: value,
-      },
-    }));
-  };
-
-  const updateArrayItem = (section, index, key, value) => {
-    setResumeData((prev) => {
-      const updatedArray = [...prev[section]];
-
-      if (key === null) {
-        updatedArray[index] = value;
-      } else {
-        updatedArray[index] = {
-          ...updatedArray[index],
-          [key]: value,
-        };
-      }
-
-      return {
-        ...prev,
-        [section]: updatedArray,
-      };
-    });
-  };
-
-  const addArrayItem = (section, newItem) => {
-    setResumeData((prev) => ({
-      ...prev,
-      [section]: [...prev[section], newItem],
-    }));
-  };
-
-  const removeArrayItem = (section, index) => {
-    setResumeData((prev) => {
-      const updatedArray = [...prev[section]];
-      updatedArray.splice(index, 1);
-      return {
-        ...prev,
-        [section]: updatedArray,
-      };
-    });
-  };
-
-  const fetchResumeDetailsById = useCallback(async () => {
-    try {
-      const response = await axiosInstance.get(
-        API_PATHS.RESUME.GET_BY_ID(resumeId)
-      );
-
-      if (response.data && response.data.profileInfo) {
-        const resumeInfo = response.data;
-
-        setResumeData((prevState) => ({
-          ...prevState,
-          title: resumeInfo?.title || "Untitled",
-          template: resumeInfo?.template || prevState?.template,
-          profileInfo: resumeInfo?.profileInfo || prevState?.profileInfo,
-          contactInfo: resumeInfo?.contactInfo || prevState?.contactInfo,
-          workExperience:
-            resumeInfo?.workExperience || prevState?.workExperience,
-          education: resumeInfo?.education || prevState?.education,
-          skills: resumeInfo?.skills || prevState?.skills,
-          projects: resumeInfo?.projects || prevState?.projects,
-          certifications:
-            resumeInfo?.certifications || prevState?.certifications,
-          languages: resumeInfo?.languages || prevState?.languages,
-          interests: resumeInfo?.interests || prevState?.interests,
-        }));
-      }
-    } catch (error) {
-      console.error("Error fetching resume:", error);
-      toast.error("Failed to load resume data");
-    }
-  }, [resumeId]);
-
-  const uploadResumeImages = async () => {
-    try {
-      setIsLoading(true);
-
-      const thumbnailElement = thumbnailRef.current;
-      if (!thumbnailElement) {
-        throw new Error("Thumbnail element not found");
-      }
-
-      const fixedThumbnail = fixTailwindColors(thumbnailElement);
-
-      const thumbnailCanvas = await html2canvas(fixedThumbnail, {
-        scale: 0.5,
-        backgroundColor: "#FFFFFF",
-        logging: false,
-      });
-
-      document.body.removeChild(fixedThumbnail);
-
-      const thumbnailDataUrl = thumbnailCanvas.toDataURL("image/png");
-      const thumbnailFile = dataURLtoFile(
-        thumbnailDataUrl,
-        `thumbnail-${resumeId}.png`
-      );
-
-      const formData = new FormData();
-      formData.append("thumbnail", thumbnailFile);
-
-      const uploadResponse = await axiosInstance.put(
-        API_PATHS.RESUME.UPLOAD_IMAGES(resumeId),
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-
-      const { thumbnailLink } = uploadResponse.data;
-      await updateResumeDetails(thumbnailLink);
-
-      toast.success("Resume Updated Successfully");
-      navigate("/dashboard");
-    } catch (error) {
-      console.error("Error Uploading Images:", error);
-      toast.error("Failed to upload images");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const updateResumeDetails = async (thumbnailLink) => {
-    try {
-      setIsLoading(true);
-
-      await axiosInstance.put(API_PATHS.RESUME.UPDATE(resumeId), {
-        ...resumeData,
-        thumbnailLink: thumbnailLink || "",
-        completion: completionPercentage,
-      });
-    } catch (err) {
-      console.error("Error updating resume:", err);
-      toast.error("Failed to update resume details");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDeleteResume = async () => {
-    try {
-      setIsLoading(true);
-      await axiosInstance.delete(API_PATHS.RESUME.DELETE(resumeId));
-      toast.success("Resume deleted successfully");
-      navigate("/dashboard");
-    } catch (error) {
-      console.error("Error deleting resume:", error);
-      toast.error("Failed to delete resume");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const downloadPDF = async () => {
+  const downloadPDF = useCallback(async () => {
     const element = resumeDownloadRef.current;
     if (!element) {
       toast.error("Failed to generate PDF. Please try again.");
@@ -683,7 +686,7 @@ const EditResume = () => {
 
     setIsDownloading(true);
     setDownloadSuccess(false);
-    const toastId = toast.loading("Generating PDFâ€¦");
+    const toastId = toast.loading("Generating PDF");
 
     const override = document.createElement("style");
     override.id = "__pdf_color_override__";
@@ -731,7 +734,7 @@ const EditResume = () => {
       document.getElementById("__pdf_color_override__")?.remove();
       setIsDownloading(false);
     }
-  };
+  }, [resumeData, resumeId]);
 
   useEffect(() => {
     if (resumeId) {
@@ -778,7 +781,7 @@ const EditResume = () => {
         <div className={containerStyles.grid}>
           <div className={containerStyles.formContainer}>
             <StepProgress progress={progress} />
-            {renderForm()}
+            {memoizedForm}
             <div className="p-4 sm:p-6">
               {errorMsg && (
                 <div className={statusStyles.error}>
@@ -860,8 +863,8 @@ const EditResume = () => {
           isDownloading
             ? "Generating..."
             : downloadSuccess
-            ? "Downloaded"
-            : "Download PDF"
+              ? "Downloaded"
+              : "Download PDF"
         }
         actionBtnIcon={
           isDownloading ? (

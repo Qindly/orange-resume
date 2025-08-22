@@ -1,4 +1,4 @@
-import React from "react";
+// 高端版进度条
 import { shimmerStyle } from "../assets/dummystyle";
 import { Check } from "lucide-react";
 

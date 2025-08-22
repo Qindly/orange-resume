@@ -1,3 +1,4 @@
+// 简历页面
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { dashboardStyles as styles } from "../assets/dummystyle";

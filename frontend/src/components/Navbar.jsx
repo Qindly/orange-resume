@@ -1,18 +1,9 @@
-import React, { useContext } from "react";
-import Login from "../components/Login.jsx";
-import SignUp from "../components/SignUp.jsx";
-import Modal from "../components/Modal.jsx";
-
+// Dashboard顶部组件
 import {
-  ArrowRight,
   LayoutTemplate,
-  Menu,
-  X,
-  Zap,
-  Download,
 } from "lucide-react";
 import { landingPageStyles } from "../assets/dummystyle.js";
-import { UserContext } from "../context/UserContext.jsx";
+
 import { ProfileInfoCard } from "../components/Card.jsx";
 
 const Navbar = () => {

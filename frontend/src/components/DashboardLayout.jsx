@@ -1,3 +1,4 @@
+// 控制面板Layout框架，简历详情的那个框架
 import React, { useContext } from "react";
 import Navbar from "./Navbar";
 import { UserContext } from '../context/UserContext';

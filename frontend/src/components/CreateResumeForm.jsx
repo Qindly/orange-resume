@@ -1,3 +1,4 @@
+//创建简历的弹窗页面内容
 import React, { useState } from "react";
 import Input from "../components/Input";
 import { useNavigate } from "react-router-dom";

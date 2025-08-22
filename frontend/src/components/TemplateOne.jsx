@@ -1,3 +1,4 @@
+//搭建成一个完整的简历渲染界面
 import React, { useEffect, useRef, useState } from "react";
 import { LuMail, LuPhone, LuGithub, LuGlobe } from "react-icons/lu";
 import { RiLinkedinLine } from "react-icons/ri";
@@ -20,7 +21,7 @@ const Title = ({ text, color }) => (
   </div>
 );
 
-const TemplateOne = ({ resumeData = {}, colorPalette, containerWidth }) => {
+const TemplateOne = ({ resumeData = {}, containerWidth }) => {
   const {
     profileInfo = {},
     contactInfo = {},
@@ -264,4 +265,4 @@ const TemplateOne = ({ resumeData = {}, colorPalette, containerWidth }) => {
   );
 };
 
-export default TemplateOne;
+export default React.memo(TemplateOne);

@@ -1,9 +1,10 @@
-
-
+// 首页展示页面
 import React, { useContext } from "react";
 import Login from "../components/Login.jsx";
 import SignUp from "../components/SignUp.jsx";
 import Modal from "../components/Modal.jsx";
+
+
 
 import {
   ArrowRight,
@@ -36,7 +37,6 @@ const LandingPage = () => {
   return (
     <>
       <div className={landingPageStyles.container}>
-
         <header className={landingPageStyles.header}>
           <div className={landingPageStyles.headerContainer}>
             <div className={landingPageStyles.logoContainer}>
@@ -122,7 +122,8 @@ const LandingPage = () => {
                 <h1 className={landingPageStyles.heading}>
                   <span className={landingPageStyles.headingText}>Craft</span>
                   <span className={landingPageStyles.headingGradient}>
-                    {" "} Professional
+                    {" "}
+                    Professional
                   </span>
                   <span className={landingPageStyles.headingText}>
                     {" "}
@@ -331,5 +332,3 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
-
-

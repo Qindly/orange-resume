@@ -34,10 +34,6 @@ export function inlineAllComputedStyles(rootElement) {
   });
 }
 
-/**
- * Given an image URL, return the lightest average color as "rgb(r, g, b)".
- * If the image fails to load (CORS or invalid URL), resolves to "#ffffff".
- */
 export const getLightColorFromImage = (imageUrl) => {
   return new Promise((resolve) => {
     if (!imageUrl || typeof imageUrl !== "string") {
@@ -102,11 +98,7 @@ export function formatYearMonth(yearMonth) {
   return yearMonth ? moment(yearMonth, "YYYY-MM").format("MMM YYYY") : ""
 }
 
-/**
- * Recursively replace any computed 'oklch(...)' in color, backgroundColor,
- * or borderColor—and any inline SVG fill/stroke attributes—so that no OKLCH
- * values remain. This runs on a given rootElement and all its descendants.
- */
+
 export const fixTailwindColors = (rootElement) => {
   if (!rootElement) return
   const elements = rootElement.querySelectorAll("*")
@@ -151,10 +143,7 @@ export async function captureElementAsImage(element) {
   clone.style.height = `${height}px`;
   document.body.appendChild(clone);
 
-  // 2) Inject a global override into the real <head>
-  //    This will force ALL elements—including Tailwind’s oklch colors—
-  //    to render with black text, white backgrounds, no box-shadows,
-  //    and no background-images.
+ 
   const override = document.createElement("style");
   override.id = "__html2canvas_override__";
   override.textContent = `

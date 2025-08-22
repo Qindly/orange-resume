@@ -1,5 +1,4 @@
-import React from "react";
-
+// 进度条组件
 const Progress = ({ progress = 0, total = 5, color, bgColor }) => {
   return (
     <div className="flex gap-1.5">
@@ -7,7 +6,7 @@ const Progress = ({ progress = 0, total = 5, color, bgColor }) => {
         <div
           key={index}
           className={`w-2 h-2 rounded transition-all ${
-            index < Progress ? "bg-cyan-500 " : "bg-cyan-100"
+            index < progress ? "bg-cyan-500 " : "bg-cyan-100"
           }`}
           style={{
             backgroundColor:

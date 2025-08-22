@@ -1,4 +1,4 @@
-import React from "react";
+// 页面弹窗的背景框
 import { modalStyles as styles } from "../assets/dummystyle.js";
 import { X } from "lucide-react";
 

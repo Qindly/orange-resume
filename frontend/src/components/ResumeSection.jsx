@@ -1,4 +1,5 @@
-import React from 'react';
+// TemplateOne里面的工具，各个部分
+
 import { ExternalLink, Github } from 'lucide-react';
 import { infoStyles as styles } from '../assets/dummystyle';
 
