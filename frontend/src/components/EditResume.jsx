@@ -1,4 +1,4 @@
-// 编辑简历的主要内容，实现左边右边的同步更新
+// 编辑Markdown文档的主要内容，实现左边右边的同步更新
 // 1. 先导入 React 相关
 import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -20,10 +20,14 @@ import {
 import toast from "react-hot-toast";
 import html2canvas from "html2canvas";
 import html2pdf from "html2pdf.js";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
 
 // 3. 导入本地组件
 import DashboardLayout from "./DashboardLayout";
 import { TitleInput } from "./Input";
+import MarkdownEditor from "./MarkdownEditor";
 
 import StepProgress from "./StepProgress";
 import Modal from "./Modal";
@@ -52,6 +56,7 @@ import {
   iconStyles,
 } from "../assets/dummystyle";
 import "./A4.css";
+import "./MarkdownEditor.css";
 
 // 调整观看大小的hook
 const useResizeObserver = () => {
@@ -76,9 +81,9 @@ const useResizeObserver = () => {
 };
 
 const EditResume = () => {
-  const { resumeId } = useParams();
+  const { documentId } = useParams();
   const navigate = useNavigate();
-  const resumeDownloadRef = useRef(null);
+  const documentDownloadRef = useRef(null);
   const thumbnailRef = useRef(null);
 
   const [openPreviewModal, setOpenPreviewModal] = useState(false);
@@ -92,7 +97,7 @@ const EditResume = () => {
 
   const { width: previewWidth, ref: previewContainerRef } = useResizeObserver();
 
-  const [resumeData, setResumeData] = useState({
+  const [documentData, setDocumentData] = useState({
     title: "Professional Resume",
     thumbnailLink: "",
     profileInfo: {
@@ -159,86 +164,26 @@ const EditResume = () => {
     interests: [""],
   });
 
+  // 添加Markdown内容状态
+  const [markdownContent, setMarkdownContent] = useState('');
+
   // Calculate completion percentage
   const completionPercentage = useMemo(() => {
     let completedFields = 0;
     let totalFields = 0;
 
-    // Profile Info
-    totalFields += 3;
-    if (resumeData.profileInfo.fullName) completedFields++;
-    if (resumeData.profileInfo.designation) completedFields++;
-    if (resumeData.profileInfo.summary) completedFields++;
-
-    // Contact Info
-    totalFields += 2;
-    if (resumeData.contactInfo.email) completedFields++;
-    if (resumeData.contactInfo.phone) completedFields++;
-
-    // Work Experience
-    resumeData.workExperience.forEach((exp) => {
-      totalFields += 5;
-      if (exp.company) completedFields++;
-      if (exp.role) completedFields++;
-      if (exp.startDate) completedFields++;
-      if (exp.endDate) completedFields++;
-      if (exp.description) completedFields++;
-    });
-
-    // Education
-    resumeData.education.forEach((edu) => {
-      totalFields += 4;
-      if (edu.degree) completedFields++;
-      if (edu.institution) completedFields++;
-      if (edu.startDate) completedFields++;
-      if (edu.endDate) completedFields++;
-    });
-
-    // Skills
-    resumeData.skills.forEach((skill) => {
-      totalFields += 2;
-      if (skill.name) completedFields++;
-      if (skill.progress > 0) completedFields++;
-    });
-
-    // Projects
-    resumeData.projects.forEach((project) => {
-      totalFields += 4;
-      if (project.title) completedFields++;
-      if (project.description) completedFields++;
-      if (project.github) completedFields++;
-      if (project.liveDemo) completedFields++;
-    });
-
-    // Certifications
-    resumeData.certifications.forEach((cert) => {
-      totalFields += 3;
-      if (cert.title) completedFields++;
-      if (cert.issuer) completedFields++;
-      if (cert.year) completedFields++;
-    });
-
-    // Languages
-    resumeData.languages.forEach((lang) => {
-      totalFields += 2;
-      if (lang.name) completedFields++;
-      if (lang.progress > 0) completedFields++;
-    });
-
-    // Interests
-    totalFields += resumeData.interests.length;
-    completedFields += resumeData.interests.filter(
-      (i) => i.trim() !== ""
-    ).length;
+    // 文档内容
+    totalFields += 1;
+    if (documentData.content && documentData.content.trim() !== '') completedFields++;
 
     const percentage = Math.round((completedFields / totalFields) * 100);
     return isNaN(percentage) ? 0 : percentage;
-  }, [resumeData]);
+  }, [documentData]);
 
 
   // useEffect(() => {
   //   calculateCompletion();
-  // }, [resumeData]);
+  // }, [documentData]);
 
   // Validate Inputs
   const validateAndNext = () => {
@@ -246,7 +191,7 @@ const EditResume = () => {
 
     switch (currentPage) {
       case "profile-info": {
-        const { fullName, designation, summary } = resumeData.profileInfo;
+        const { fullName, designation, summary } = documentData.profileInfo;
         if (!fullName.trim()) errors.push("Full Name is required");
         if (!designation.trim()) errors.push("Designation is required");
         if (!summary.trim()) errors.push("Summary is required");
@@ -254,7 +199,7 @@ const EditResume = () => {
       }
 
       case "contact-info": {
-        const { email, phone } = resumeData.contactInfo;
+        const { email, phone } = documentData.contactInfo;
         if (!email.trim() || !/^\S+@\S+\.\S+$/.test(email))
           errors.push("Valid email is required.");
         if (!phone.trim() || !/^\d{10}$/.test(phone))
@@ -263,7 +208,7 @@ const EditResume = () => {
       }
 
       case "work-experience": {
-        resumeData.workExperience.forEach(
+        documentData.workExperience.forEach(
           ({ company, role, startDate, endDate }, index) => {
             if (!company || !company.trim())
               errors.push(`Company is required in experience ${index + 1}`);
@@ -279,7 +224,7 @@ const EditResume = () => {
       }
 
       case "education-info": {
-        resumeData.education.forEach(
+        documentData.education.forEach(
           ({ degree, institution, startDate, endDate }, index) => {
             if (!degree.trim())
               errors.push(`Degree is required in education ${index + 1}`);
@@ -295,7 +240,7 @@ const EditResume = () => {
       }
 
       case "skills": {
-        resumeData.skills.forEach(({ name, progress }, index) => {
+        documentData.skills.forEach(({ name, progress }, index) => {
           if (!name.trim())
             errors.push(`Skill name is required in skill ${index + 1}`);
           if (progress < 1 || progress > 100)
@@ -307,7 +252,7 @@ const EditResume = () => {
       }
 
       case "projects": {
-        resumeData.projects.forEach(({ title, description }, index) => {
+        documentData.projects.forEach(({ title, description }, index) => {
           if (!title.trim())
             errors.push(`Project Title is required in project ${index + 1}`);
           if (!description.trim())
@@ -319,7 +264,7 @@ const EditResume = () => {
       }
 
       case "certifications": {
-        resumeData.certifications.forEach(({ title, issuer }, index) => {
+        documentData.certifications.forEach(({ title, issuer }, index) => {
           if (!title.trim())
             errors.push(
               `Certification Title is required in certification ${index + 1}`
@@ -331,17 +276,9 @@ const EditResume = () => {
       }
 
       case "additionalInfo": {
-        if (
-          resumeData.languages.length === 0 ||
-          !resumeData.languages[0].name?.trim()
-        ) {
-          errors.push("At least one language is required");
-        }
-        if (
-          resumeData.interests.length === 0 ||
-          !resumeData.interests[0]?.trim()
-        ) {
-          errors.push("At least one interest is required");
+        // 文档内容验证
+        if (!documentData.content || !documentData.content.trim()) {
+          errors.push("文档内容不能为空");
         }
         break;
       }
@@ -412,7 +349,7 @@ const EditResume = () => {
 
 
   const updateSection = useCallback((section, key, value) => {
-    setResumeData((prev) => ({
+    setDocumentData((prev) => ({
       ...prev,
       [section]: {
         ...prev[section],
@@ -422,7 +359,7 @@ const EditResume = () => {
   }, []);
 
   const updateArrayItem = useCallback((section, index, key, value) => {
-    setResumeData((prev) => {
+    setDocumentData((prev) => {
       const updatedArray = [...prev[section]];
 
       if (key === null) {
@@ -442,14 +379,14 @@ const EditResume = () => {
   }, []);
 
   const addArrayItem = useCallback((section, newItem) => {
-    setResumeData((prev) => ({
+    setDocumentData((prev) => ({
       ...prev,
       [section]: [...prev[section], newItem],
     }));
   }, []);
 
   const removeArrayItem = useCallback((section, index) => {
-    setResumeData((prev) => {
+    setDocumentData((prev) => {
       const updatedArray = [...prev[section]];
       updatedArray.splice(index, 1);
       return {
@@ -459,16 +396,16 @@ const EditResume = () => {
     });
   }, []);
 
-  const fetchResumeDetailsById = useCallback(async () => {
+  const fetchDocumentDetailsById = useCallback(async () => {
     try {
       const response = await axiosInstance.get(
-        API_PATHS.RESUME.GET_BY_ID(resumeId)
+        API_PATHS.RESUME.GET_BY_ID(documentId)
       );
 
       if (response.data && response.data.profileInfo) {
         const resumeInfo = response.data;
 
-        setResumeData((prevState) => ({
+        setDocumentData((prevState) => ({
           ...prevState,
           title: resumeInfo?.title || "Untitled",
           template: resumeInfo?.template || prevState?.template,
@@ -486,10 +423,10 @@ const EditResume = () => {
         }));
       }
     } catch (error) {
-      console.error("Error fetching resume:", error);
-      toast.error("Failed to load resume data");
+      console.error("Error fetching document:", error);
+      toast.error("加载文档数据失败");
     }
-  }, [resumeId]);
+  }, [documentId]);
 
   const uploadResumeImages = useCallback(async () => {
     try {
@@ -513,14 +450,14 @@ const EditResume = () => {
       const thumbnailDataUrl = thumbnailCanvas.toDataURL("image/png");
       const thumbnailFile = dataURLtoFile(
         thumbnailDataUrl,
-        `thumbnail-${resumeId}.png`
+        `thumbnail-${documentId}.png`
       );
 
       const formData = new FormData();
       formData.append("thumbnail", thumbnailFile);
 
       const uploadResponse = await axiosInstance.put(
-        API_PATHS.RESUME.UPLOAD_IMAGES(resumeId),
+        API_PATHS.RESUME.UPLOAD_IMAGES(documentId),
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -530,11 +467,11 @@ const EditResume = () => {
       const { thumbnailLink } = uploadResponse.data;
       await updateResumeDetails(thumbnailLink);
 
-      toast.success("Resume Updated Successfully");
+      toast.success("文档更新成功");
       navigate("/dashboard");
     } catch (error) {
       console.error("Error Uploading Images:", error);
-      toast.error("Failed to upload images");
+      toast.error("上传图片失败");
     } finally {
       setIsLoading(false);
     }
@@ -544,14 +481,14 @@ const EditResume = () => {
     try {
       setIsLoading(true);
 
-      await axiosInstance.put(API_PATHS.RESUME.UPDATE(resumeId), {
-        ...resumeData,
+      await axiosInstance.put(API_PATHS.RESUME.UPDATE(documentId), {
+        ...documentData,
         thumbnailLink: thumbnailLink || "",
         completion: completionPercentage,
       });
     } catch (err) {
-      console.error("Error updating resume:", err);
-      toast.error("Failed to update resume details");
+      console.error("Error updating document:", err);
+      toast.error("更新文档详情失败");
     } finally {
       setIsLoading(false);
     }
@@ -560,12 +497,12 @@ const EditResume = () => {
   const handleDeleteResume = useCallback(async () => {
     try {
       setIsLoading(true);
-      await axiosInstance.delete(API_PATHS.RESUME.DELETE(resumeId));
-      toast.success("Resume deleted successfully");
+      await axiosInstance.delete(API_PATHS.RESUME.DELETE(documentId));
+      toast.success("文档删除成功");
       navigate("/dashboard");
     } catch (error) {
-      console.error("Error deleting resume:", error);
-      toast.error("Failed to delete resume");
+      console.error("Error deleting document:", error);
+      toast.error("删除文档失败");
     } finally {
       setIsLoading(false);
     }
@@ -575,7 +512,7 @@ const EditResume = () => {
       case "profile-info":
         return (
           <ProfileInfoForm
-            profileData={resumeData?.profileInfo}
+            profileData={documentData?.profileInfo}
             updateSection={(key, value) =>
               updateSection("profileInfo", key, value)
             }
@@ -586,7 +523,7 @@ const EditResume = () => {
       case "contact-info":
         return (
           <ContactInfoForm
-            contactInfo={resumeData?.contactInfo}
+            contactInfo={documentData?.contactInfo}
             updateSection={(key, value) =>
               updateSection("contactInfo", key, value)
             }
@@ -596,7 +533,7 @@ const EditResume = () => {
       case "work-experience":
         return (
           <WorkExperienceForm
-            workExperience={resumeData?.workExperience}
+            workExperience={documentData?.workExperience}
             updateArrayItem={(index, key, value) => {
               updateArrayItem("workExperience", index, key, value);
             }}
@@ -610,7 +547,7 @@ const EditResume = () => {
       case "education-info":
         return (
           <EducationDetailsForm
-            educationInfo={resumeData?.education}
+            educationInfo={documentData?.education}
             updateArrayItem={(index, key, value) => {
               updateArrayItem("education", index, key, value);
             }}
@@ -622,7 +559,7 @@ const EditResume = () => {
       case "skills":
         return (
           <SkillsInfoForm
-            skillsInfo={resumeData?.skills}
+            skillsInfo={documentData?.skills}
             updateArrayItem={(index, key, value) => {
               updateArrayItem("skills", index, key, value);
             }}
@@ -634,7 +571,7 @@ const EditResume = () => {
       case "projects":
         return (
           <ProjectDetailForm
-            projectInfo={resumeData?.projects}
+            projectInfo={documentData?.projects}
             updateArrayItem={(index, key, value) => {
               updateArrayItem("projects", index, key, value);
             }}
@@ -646,7 +583,7 @@ const EditResume = () => {
       case "certifications":
         return (
           <CertificationInfoForm
-            certifications={resumeData?.certifications}
+            certifications={documentData?.certifications}
             updateArrayItem={(index, key, value) => {
               updateArrayItem("certifications", index, key, value);
             }}
@@ -660,8 +597,8 @@ const EditResume = () => {
       case "additionalInfo":
         return (
           <AdditionalInfoForm
-            languages={resumeData.languages}
-            interests={resumeData.interests}
+            languages={documentData.languages}
+            interests={documentData.interests}
             updateArrayItem={(section, index, key, value) =>
               updateArrayItem(section, index, key, value)
             }
@@ -675,18 +612,18 @@ const EditResume = () => {
       default:
         return null;
     }
-  }, [currentPage, resumeData, updateSection, updateArrayItem, addArrayItem, removeArrayItem]);
+  }, [currentPage, documentData, updateSection, updateArrayItem, addArrayItem, removeArrayItem]);
 
   const downloadPDF = useCallback(async () => {
-    const element = resumeDownloadRef.current;
+    const element = documentDownloadRef.current;
     if (!element) {
-      toast.error("Failed to generate PDF. Please try again.");
+      toast.error("生成PDF失败，请重试。");
       return;
     }
 
     setIsDownloading(true);
     setDownloadSuccess(false);
-    const toastId = toast.loading("Generating PDF");
+    const toastId = toast.loading("正在生成PDF");
 
     const override = document.createElement("style");
     override.id = "__pdf_color_override__";
@@ -703,7 +640,7 @@ const EditResume = () => {
       await html2pdf()
         .set({
           margin: 0,
-          filename: `${resumeData.title.replace(/[^a-z0-9]/gi, "_")}.pdf`,
+          filename: `${documentData.title.replace(/[^a-z0-9]/gi, "_")}.pdf`,
           image: { type: "png", quality: 1.0 },
           html2canvas: {
             scale: 2,
@@ -724,190 +661,211 @@ const EditResume = () => {
         .from(element)
         .save();
 
-      toast.success("PDF downloaded successfully!", { id: toastId });
+      toast.success("PDF下载成功！", { id: toastId });
       setDownloadSuccess(true);
       setTimeout(() => setDownloadSuccess(false), 3000);
     } catch (err) {
       console.error("PDF error:", err);
-      toast.error(`Failed to generate PDF: ${err.message}`, { id: toastId });
+      toast.error(`生成PDF失败: ${err.message}`, { id: toastId });
     } finally {
       document.getElementById("__pdf_color_override__")?.remove();
       setIsDownloading(false);
     }
-  }, [resumeData, resumeId]);
+  }, [documentData, documentId]);
+
+  const downloadImage = useCallback(async () => {
+    const element = documentDownloadRef.current;
+    if (!element) {
+      toast.error("生成图片失败，请重试。");
+      return;
+    }
+
+    setIsDownloading(true);
+    const toastId = toast.loading("正在生成图片");
+
+    try {
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: "#FFFFFF",
+        logging: false,
+      });
+
+      const imageDataUrl = canvas.toDataURL("image/png");
+      const imageFile = dataURLtoFile(imageDataUrl, `${documentData.title.replace(/[^a-z0-9]/gi, "_")}.png`);
+
+      const formData = new FormData();
+      formData.append("image", imageFile);
+
+      const uploadResponse = await axiosInstance.put(
+        API_PATHS.RESUME.UPLOAD_IMAGES(documentId),
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      const { thumbnailLink } = uploadResponse.data;
+      await updateResumeDetails(thumbnailLink);
+
+      toast.success("图片下载成功！", { id: toastId });
+      setDownloadSuccess(true);
+      setTimeout(() => setDownloadSuccess(false), 3000);
+    } catch (err) {
+      console.error("Image error:", err);
+      toast.error(`生成图片失败: ${err.message}`, { id: toastId });
+    } finally {
+      setIsDownloading(false);
+    }
+  }, [documentData, documentId, updateResumeDetails]);
 
   useEffect(() => {
-    if (resumeId) {
-      fetchResumeDetailsById();
+    if (documentId) {
+      fetchDocumentDetailsById();
     }
-  }, [resumeId, fetchResumeDetailsById]);
+  }, [documentId, fetchDocumentDetailsById]);
 
   return (
     <DashboardLayout>
       <div className={containerStyles.main}>
         <div className={containerStyles.header}>
           <TitleInput
-            title={resumeData.title}
-            setTitle={(value) =>
-              setResumeData((prev) => ({
-                ...prev,
-                title: value,
-              }))
-            }
+            title="Markdown文档编辑器"
+            setTitle={(value) => {
+              console.log('标题更新:', value);
+            }}
           />
 
           <div className="flex flex-wrap items-center gap-3">
             <button
-              onClick={handleDeleteResume}
-              className={buttonStyles.delete}
+              onClick={() => navigate("/dashboard")}
+              className={buttonStyles.back}
               disabled={isLoading}
             >
-              <Trash2 size={16} />
-              <span className="text-sm">Delete</span>
+              <ArrowLeft size={16} />
+              <span className="text-sm">返回</span>
             </button>
 
             <button
-              onClick={() => setOpenPreviewModal(true)}
+              onClick={() => {
+                console.log('预览Markdown内容:', markdownContent);
+                setOpenPreviewModal(true);
+              }}
               className={buttonStyles.download}
               disabled={isLoading}
             >
-              <Download size={16} />
-              <span className="text-sm">Preview</span>
+              <Eye size={16} />
+              <span className="text-sm">预览</span>
             </button>
           </div>
         </div>
 
-        {/* step progress */}
-        <div className={containerStyles.grid}>
-          <div className={containerStyles.formContainer}>
-            <StepProgress progress={progress} />
-            {memoizedForm}
-            <div className="p-4 sm:p-6">
-              {errorMsg && (
-                <div className={statusStyles.error}>
-                  <AlertCircle size={16} />
-                  {errorMsg}
-                </div>
-              )}
-              <div className="flex flex-wrap items-center justify-end gap-3">
-                <button
-                  className={buttonStyles.back}
-                  onClick={goBack}
-                  disabled={isLoading}
-                >
-                  <ArrowLeft size={16} />
-                  <span>Back</span>
-                </button>
-                <button
-                  className={buttonStyles.save}
-                  onClick={uploadResumeImages}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <Loader2 size={16} className="animate-spin" />
-                  ) : (
-                    <Save size={16} />
-                  )}
-                  {isLoading ? "Saving..." : "Save & Exit"}
-                </button>
-
-                <button
-                  className={buttonStyles.next}
-                  onClick={validateAndNext}
-                  disabled={isLoading}
-                >
-                  {currentPage === "additionalInfo" && <Download size={16} />}
-                  {currentPage === "additionalInfo"
-                    ? "Preview & Download"
-                    : "Next"}
-                  {currentPage === "additionalInfo" && (
-                    <ArrowLeft size={16} className="rotate-100" />
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="hidden lg:block">
-            <div className={containerStyles.previewContainer}>
-              <div className="text-center mb-4">
-                <div className={statusStyles.completionBadge}>
-                  <div className={iconStyles.pulseDot}></div>
-                  <span>Preview - {completionPercentage}% Complete</span>
-                </div>
-              </div>
-
-              <div
-                className="preview-container relative"
-                ref={previewContainerRef}
-              >
-                <div className={containerStyles.previewInner}>
-                  <TemplateOne
-                    key={`preview-${resumeData?.template?.theme}`}
-                    resumeData={resumeData}
-                    containerWidth={previewWidth}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Markdown编辑器 */}
+        <div className="h-full">
+          <MarkdownEditor
+            content={markdownContent}
+            onContentChange={setMarkdownContent}
+            onSave={(content) => {
+              console.log('保存Markdown内容:', content);
+              toast.success('内容已保存');
+            }}
+          />
         </div>
       </div>
 
       <Modal
         isOpen={openPreviewModal}
         onClose={() => setOpenPreviewModal(false)}
-        title={resumeData.title}
-        showActionBtn
-        actionBtnText={
-          isDownloading
-            ? "Generating..."
-            : downloadSuccess
-              ? "Downloaded"
-              : "Download PDF"
-        }
-        actionBtnIcon={
-          isDownloading ? (
-            <Loader2 size={16} className="animate-spin" />
-          ) : downloadSuccess ? (
-            <Check size={16} className="text-white" />
-          ) : (
-            <Download size={16} />
-          )
-        }
-        onActionClick={downloadPDF}
+        title="Markdown文档预览"
+        showActionBtn={false}
       >
         <div className="relative">
           <div className="text-center mb-4">
             <div className={statusStyles.modalBadge}>
               <div className={iconStyles.pulseDot}></div>
-              <span>Completion:{completionPercentage}%</span>
+              <span>Markdown预览</span>
             </div>
           </div>
 
-          <div className={containerStyles.pdfPreview}>
-            <div ref={resumeDownloadRef} className="a4-wrapper">
-              <div className="w-full h-full">
-                <TemplateOne
-                  key={`pdf-${resumeData?.template?.theme}`}
-                  resumeData={resumeData}
-                  containerWidth={null}
-                />
-              </div>
+          {/* 下载按钮区域 */}
+          <div className="flex justify-center gap-3 mb-4">
+            <button
+              onClick={() => downloadPDF()}
+              disabled={isDownloading}
+              className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isDownloading ? (
+                <Loader2 size={16} className="mr-2 animate-spin" />
+              ) : (
+                <Download size={16} className="mr-2" />
+              )}
+              {isDownloading ? '生成中...' : '下载PDF'}
+            </button>
+
+            <button
+              onClick={() => downloadImage()}
+              disabled={isDownloading}
+              className="flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isDownloading ? (
+                <Loader2 size={16} className="mr-2 animate-spin" />
+              ) : (
+                <Download size={16} className="mr-2" />
+              )}
+              {isDownloading ? '生成中...' : '下载图片'}
+            </button>
+          </div>
+
+          {/* 预览内容区域 - 增加高度和滚动 */}
+          <div className="max-h-[70vh] overflow-y-auto p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div
+              ref={documentDownloadRef}
+              className="markdown-content bg-white"
+            >
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeHighlight]}
+              >
+                {markdownContent || `# 开始编写您的文档
+
+在左侧编辑区域输入Markdown内容，右侧将实时显示预览效果。
+
+## 支持的语法
+
+- **粗体文本**
+- *斜体文本*
+- \`行内代码\`
+- [链接](https://example.com)
+- 列表项
+
+\`\`\`javascript
+// 代码块
+function hello() {
+  console.log('Hello World!');
+}
+\`\`\`
+
+| 表格 | 示例 |
+|------|------|
+| 单元格1 | 单元格2 |
+
+> 引用文本示例`}
+              </ReactMarkdown>
             </div>
           </div>
+
+          {/* 下载成功提示 */}
+          {downloadSuccess && (
+            <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-center text-green-800">
+                <Check size={16} className="mr-2" />
+                <span className="text-sm">文件下载成功！</span>
+              </div>
+            </div>
+          )}
         </div>
       </Modal>
 
-      {/* now thumnail error fix */}
-      <div style={{ display: "none" }} ref={thumbnailRef}>
-        <div className={containerStyles.hiddenThumbnail}>
-          <TemplateOne
-            key={`thumbnail-${resumeData?.template?.theme}`}
-            resumeData={resumeData}
-          />
-        </div>
-      </div>
+      {/* 移除不需要的缩略图元素 */}
     </DashboardLayout>
   );
 };

@@ -43,7 +43,7 @@ const LandingPage = () => {
               <div className={landingPageStyles.logoIcon}>
                 <LayoutTemplate className={landingPageStyles.logoIconInner} />
               </div>
-              <span className={landingPageStyles.logoText}>ResumeXpert</span>
+              <span className={landingPageStyles.logoText}>MarkdownXpert</span>
             </div>
             <button
               className={landingPageStyles.mobileMenuButton}
@@ -68,7 +68,7 @@ const LandingPage = () => {
                     className={landingPageStyles.desktopAuthButtonOverlay}
                   ></div>
                   <span className={landingPageStyles.desktopAuthButtonText}>
-                    Get Started
+                    开始使用
                   </span>
                 </button>
               )}
@@ -80,7 +80,7 @@ const LandingPage = () => {
                   {user ? (
                     <div className={landingPageStyles.mobileUserInfo}>
                       <div className={landingPageStyles.mobileUserWelcome}>
-                        Welcome, {user.name}!
+                        欢迎，{user.name}！
                       </div>
                       <button
                         className={landingPageStyles.mobileDashboardButton}
@@ -89,7 +89,7 @@ const LandingPage = () => {
                           setMobileMenuOpen(false);
                         }}
                       >
-                        Go to Dashboard
+                        进入工作台
                       </button>
                     </div>
                   ) : (
@@ -100,7 +100,7 @@ const LandingPage = () => {
                         setMobileMenuOpen(false);
                       }}
                     >
-                      Get Started
+                      开始使用
                     </button>
                   )}
                 </div>
@@ -115,26 +115,25 @@ const LandingPage = () => {
             <div className={landingPageStyles.heroGrid}>
               <div className={landingPageStyles.heroLeft}>
                 <div className={landingPageStyles.tagline}>
-                  Professional Resume Builder
+                  专业的Markdown文档编辑器
                 </div>
 
                 {/* 大标题 */}
                 <h1 className={landingPageStyles.heading}>
-                  <span className={landingPageStyles.headingText}>Craft</span>
+                  <span className={landingPageStyles.headingText}>创建</span>
                   <span className={landingPageStyles.headingGradient}>
                     {" "}
-                    Professional
+                    专业
                   </span>
                   <span className={landingPageStyles.headingText}>
                     {" "}
-                    Resumes
+                    Markdown文档
                   </span>
                 </h1>
 
                 {/* 详情介绍 */}
                 <p className={landingPageStyles.description}>
-                  Create a professional resume in minutes with our easy-to-use
-                  resume builder.
+                  使用我们简单易用的Markdown编辑器，在几分钟内创建专业的文档。
                 </p>
 
                 {/* 开始的两个选项 */}
@@ -147,7 +146,7 @@ const LandingPage = () => {
                       className={landingPageStyles.primaryButtonOverlay}
                     ></div>
                     <span className={landingPageStyles.primaryButtonContent}>
-                      Start Building
+                      开始编写
                       <ArrowRight
                         className={landingPageStyles.primaryButtonIcon}
                         size={18}
@@ -159,7 +158,7 @@ const LandingPage = () => {
                     className={landingPageStyles.secondaryButton}
                     onClick={handleCTA}
                   >
-                    View Templates
+                    查看模板
                   </button>
                 </div>
 
@@ -168,17 +167,17 @@ const LandingPage = () => {
                   {[
                     {
                       value: "50K+",
-                      label: "Resumes Created",
+                      label: "文档已创建",
                       gradient: "from-violet-600 to-fuchsia-600",
                     },
                     {
                       value: "4.9★",
-                      label: "User Rating",
+                      label: "用户评分",
                       gradient: "from-orange-500 to-red-500",
                     },
                     {
-                      value: "5 Min",
-                      label: "Build Time",
+                      value: "5 分钟",
+                      label: "创建时间",
                       gradient: "from-emerald-500 to-teal-500",
                     },
                   ].map((stat, idx) => (
@@ -203,14 +202,13 @@ const LandingPage = () => {
             <div className={landingPageStyles.featuresContainer}>
               <div className={landingPageStyles.featuresHeader}>
                 <h2 className={landingPageStyles.featureTitle}>
-                  Why Choose
+                  为什么选择
                   <span className={landingPageStyles.featuresTitleGradient}>
-                    ResumeXpert?
+                    MarkdownXpert？
                   </span>
                 </h2>
                 <p className={landingPageStyles.featuresDescription}>
-                  ResumeXpert is a powerful tool that helps you create a
-                  professional and ATS-friendly resume.
+                  MarkdownXpert是一个强大的工具，帮助您创建专业且格式完美的Markdown文档。
                 </p>
               </div>
 
@@ -218,9 +216,9 @@ const LandingPage = () => {
                 {[
                   {
                     icon: <Zap className={landingPageStyles.featureIcon} />,
-                    title: "Lightning Fast",
+                    title: "极速编写",
                     description:
-                      "Create professional resumes in under 5 minutes with our streamlined process",
+                      "使用我们简化的流程，在5分钟内创建专业的Markdown文档",
                     gradient: landingPageStyles.featureIconViolet,
                     bg: landingPageStyles.featureCardViolet,
                   },
@@ -230,9 +228,9 @@ const LandingPage = () => {
                         className={landingPageStyles.featureIcon}
                       />
                     ),
-                    title: "Pro Templates",
+                    title: "专业模板",
                     description:
-                      "Choose from dozens of recruiter-approved, industry-specific templates",
+                      "从数十个经过验证的行业特定模板中选择",
                     gradient: landingPageStyles.featureIconFuchsia,
                     bg: landingPageStyles.featureCardFuchsia,
                   },
@@ -240,9 +238,9 @@ const LandingPage = () => {
                     icon: (
                       <Download className={landingPageStyles.featureIcon} />
                     ),
-                    title: "Instant Export",
+                    title: "即时导出",
                     description:
-                      "Download high-quality PDFs instantly with perfect formatting",
+                      "立即下载高质量PDF，格式完美",
                     gradient: landingPageStyles.featureIconOrange,
                     bg: landingPageStyles.featureCardOrange,
                   },
@@ -277,14 +275,13 @@ const LandingPage = () => {
                 <div className={landingPageStyles.ctaCardBg}></div>
                 <div className={landingPageStyles.ctaCardContent}>
                   <h2 className={landingPageStyles.ctaTitle}>
-                    Ready to Build Your
+                    准备创建您的
                     <span className={landingPageStyles.ctaTitleGradient}>
-                      Standout Resume?
+                      出色文档？
                     </span>
                   </h2>
                   <p className={landingPageStyles.ctaDescription}>
-                    Get started with ResumeXpert today and take your job search
-                    to the next level!
+                    立即开始使用MarkdownXpert，将您的文档创作提升到新水平！
                   </p>
                   <button
                     className={landingPageStyles.ctaButton}
@@ -292,7 +289,7 @@ const LandingPage = () => {
                   >
                     <div className={landingPageStyles.ctaButtonOverlay}></div>
                     <span className={landingPageStyles.ctaButtonText}>
-                      Start Building Now
+                      立即开始编写
                     </span>
                   </button>
                 </div>
@@ -304,7 +301,7 @@ const LandingPage = () => {
         <footer className={landingPageStyles.footer}>
           <div className={landingPageStyles.footerContainer}>
             <p className={landingPageStyles.footerText}>
-              Best Wishes For Your Success!
+              祝您创作成功！
             </p>
           </div>
         </footer>

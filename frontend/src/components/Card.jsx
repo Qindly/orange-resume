@@ -34,7 +34,7 @@ export const ProfileInfoCard = () => {
         <div>
           <div className={cardStyles.profileName}>{user.name || ""}</div>
           <button className={cardStyles.logoutButton} onClick={handleLogout}>
-            Logout
+            退出登录
           </button>
         </div>
       </div>
@@ -43,7 +43,7 @@ export const ProfileInfoCard = () => {
 };
 
 export const ResumeSummaryCard = ({
-  title = "Untitled Resume",
+  title = "未命名文档",
   createdAt = null,
   updatedAt = null,
   onSelect,
@@ -54,18 +54,18 @@ export const ResumeSummaryCard = ({
 
   const formattedCreatedDate = createdAt
     ? new Date(createdAt).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      })
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })
     : "—";
 
   const formattedUpdatedDate = updatedAt
     ? new Date(updatedAt).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      })
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })
     : "—";
 
   const getCompletionColor = () => {
@@ -108,9 +108,8 @@ export const ResumeSummaryCard = ({
       {/* Completion indicator */}
       <div className={cardStyles.completionIndicator}>
         <div
-          className={`${
-            cardStyles.completionDot
-          } bg-gradient-to-r ${getCompletionColor()}`}
+          className={`${cardStyles.completionDot
+            } bg-gradient-to-r ${getCompletionColor()}`}
         >
           <div className={cardStyles.completionDotInner} />
         </div>
@@ -138,11 +137,10 @@ export const ResumeSummaryCard = ({
             {["Profile", "Work", "Skills", "Edu"].map((section, i) => (
               <div
                 key={i}
-                className={`px-2 py-1 text-xs rounded-md ${
-                  i < Math.floor(completion / 25)
+                className={`px-2 py-1 text-xs rounded-md ${i < Math.floor(completion / 25)
                     ? "bg-white/90 text-indigo-600 font-medium"
                     : "bg-white/50 text-gray-500"
-                }`}
+                  }`}
               >
                 {section}
               </div>
@@ -209,8 +207,8 @@ export const ResumeSummaryCard = ({
             {completion < 50
               ? "Getting Started"
               : completion < 80
-              ? "Almost There"
-              : "Ready to Go!"}
+                ? "Almost There"
+                : "Ready to Go!"}
           </span>
           <span className="text-xs font-bold text-gray-700">
             {completion}% Complete
@@ -226,11 +224,10 @@ export const TemplateCard = ({ thumbnailImg, isSelected, onSelect }) => {
   return (
     <div
       className={`group h-auto md:h-[300px] lg:h-[320px] flex flex-col bg-white border-2 overflow-hidden
-    cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-lg rounded-3xl ${
-      isSelected
-        ? "border-violet-500 shadow-lg shadow-violet-500/20 bg-amber-50"
-        : "border-gray-200 hover:border-violet-300"
-    } `}
+    cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-lg rounded-3xl ${isSelected
+          ? "border-violet-500 shadow-lg shadow-violet-500/20 bg-amber-50"
+          : "border-gray-200 hover:border-violet-300"
+        } `}
       onClick={onSelect}
     >
       {thumbnailImg ? (
