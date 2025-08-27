@@ -2,20 +2,12 @@
 import html2canvas from "html2canvas";
 import moment from "moment"
 
-/**
- * Validate email format.
- */
 export const validateEmail = (email) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return regex.test(email)
 }
 
-/**
- * Given a rootElement, walk it and every descendant and copy its
- * computed style into inline style.cssText. This forces ALL colors,
- * fonts, spacings, shadows, borders, etc. to be “real” values that
- * html2canvas understands (no more unsupported oklch()).
- */
+
 export function inlineAllComputedStyles(rootElement) {
   const nodes = [rootElement, ...rootElement.querySelectorAll("*")];
   nodes.forEach((node) => {

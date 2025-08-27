@@ -138,11 +138,11 @@ const Dashboard = () => {
         {/* 首行目录和创建 */}
         <div className={styles.headerWrapper}>
           <div>
-            <h1 className={styles.headerTitle}>My Resumes</h1>
+            <h1 className={styles.headerTitle}>我的简历</h1>
             <p className={styles.headerSubtitle}>
               {allResumes.length > 0
-                ? `you have ${allResumes.length} resumes`
-                : "you have no resumes"}
+                ? `你已经创建了 ${allResumes.length} 份简历`
+                : "你还没有创建简历"}
             </p>
           </div>
 
@@ -153,7 +153,7 @@ const Dashboard = () => {
             >
               <div className={styles.createButtonOverlay}></div>
               <span className={styles.createButtonContent}>
-                Create Now
+                开始创建
                 <LucideFilePlus
                   className="group-hover:translate-x-1 transition-transform"
                   size={18}
@@ -177,9 +177,9 @@ const Dashboard = () => {
               <LucideFilePlus size={32} className="text-violet-600" />
             </div>
 
-            <h3 className={styles.emptyTitle}> No Resumes Yet</h3>
+            <h3 className={styles.emptyTitle}> 目前没有简历</h3>
             <p className={styles.emptyText}>
-              Create your first resume by clicking the button below.
+              点击下方按钮开始创建你的第一份简历。
             </p>
 
             <button
@@ -188,7 +188,7 @@ const Dashboard = () => {
             >
               <div className={styles.createButtonOverlay}></div>
               <span className={styles.createButtonContent}>
-                Create Now
+                开始创建
                 <LucideFilePlus
                   className="group-hover:translate-x-1 transition-transform"
                   size={20}
@@ -207,8 +207,8 @@ const Dashboard = () => {
               <div className={styles.newResumeIcon}>
                 <LucideFilePlus size={32} className="text-white" />
               </div>
-              <h3 className={styles.newResumeTitle}>Create New Resume</h3>
-              <p className={styles.newResumeText}>Start building your resume</p>
+              <h3 className={styles.newResumeTitle}>创建简历</h3>
+              <p className={styles.newResumeText}>开始创建你的简历</p>
             </div>
 
             {allResumes.map((resume) => (
@@ -238,7 +238,7 @@ const Dashboard = () => {
       >
         <div className="p-6">
           <div className={styles.modalHeader}>
-            <h3 className={styles.modalTitle}>Create New Resume</h3>
+            <h3 className={styles.modalTitle}>创建新的简历</h3>
             <button
               onClick={() => setOpenCreateModel(false)}
               className={styles.modalCloseButton}
@@ -259,9 +259,9 @@ const Dashboard = () => {
       <Modal
         isOpen={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
-        title="Confirm Delete"
+        title="确认删除"
         showActionBtn
-        actionBtnText="Delete"
+        actionBtnText="删除"
         onActionClick={handleDeleteResume}
       >
         <div className="p-4">
@@ -269,10 +269,9 @@ const Dashboard = () => {
             <div className={styles.deleteIconWrapper}>
               <LucideTrash2 size={24} className="text-red-600" />
             </div>
-            <h3 className={styles.deleteTitle}>Delete Resume?</h3>
+            <h3 className={styles.deleteTitle}>确认删除简历？</h3>
             <p className={styles.deleteText}>
-              Are you sure you want to delete this resume? This action is
-              irreversible.
+              你确定要删除这份简历吗？删除后将无法恢复。
             </p>
           </div>
         </div>

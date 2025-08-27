@@ -53,6 +53,23 @@ import {
 } from "../assets/dummystyle";
 import "./A4.css";
 
+// 防抖 Hook
+// const useDebounce = (value, delay) => {
+//   const [debouncedValue, setDebouncedValue] = useState(value);
+
+//   useEffect(() => {
+//     const handler = setTimeout(() => {
+//       setDebouncedValue(value);
+//     }, delay);
+
+//     return () => {
+//       clearTimeout(handler);
+//     };
+//   }, [value, delay]);
+
+//   return debouncedValue;
+// };
+
 // 调整观看大小的hook
 const useResizeObserver = () => {
   const [size, setSize] = useState({ width: 0, height: 0 });
@@ -92,8 +109,10 @@ const EditResume = () => {
 
   const { width: previewWidth, ref: previewContainerRef } = useResizeObserver();
 
+
+
   const [resumeData, setResumeData] = useState({
-    title: "Professional Resume",
+    title: "职业简历",
     thumbnailLink: "",
     profileInfo: {
       fullName: "",
@@ -235,131 +254,7 @@ const EditResume = () => {
     return isNaN(percentage) ? 0 : percentage;
   }, [resumeData]);
 
-
-  // useEffect(() => {
-  //   calculateCompletion();
-  // }, [resumeData]);
-
-  // Validate Inputs
-  const validateAndNext = () => {
-    const errors = [];
-
-    switch (currentPage) {
-      case "profile-info": {
-        const { fullName, designation, summary } = resumeData.profileInfo;
-        if (!fullName.trim()) errors.push("Full Name is required");
-        if (!designation.trim()) errors.push("Designation is required");
-        if (!summary.trim()) errors.push("Summary is required");
-        break;
-      }
-
-      case "contact-info": {
-        const { email, phone } = resumeData.contactInfo;
-        if (!email.trim() || !/^\S+@\S+\.\S+$/.test(email))
-          errors.push("Valid email is required.");
-        if (!phone.trim() || !/^\d{10}$/.test(phone))
-          errors.push("Valid 10-digit phone number is required");
-        break;
-      }
-
-      case "work-experience": {
-        resumeData.workExperience.forEach(
-          ({ company, role, startDate, endDate }, index) => {
-            if (!company || !company.trim())
-              errors.push(`Company is required in experience ${index + 1}`);
-            if (!role || !role.trim())
-              errors.push(`Role is required in experience ${index + 1}`);
-            if (!startDate || !endDate)
-              errors.push(
-                `Start and End dates are required in experience ${index + 1}`
-              );
-          }
-        );
-        break;
-      }
-
-      case "education-info": {
-        resumeData.education.forEach(
-          ({ degree, institution, startDate, endDate }, index) => {
-            if (!degree.trim())
-              errors.push(`Degree is required in education ${index + 1}`);
-            if (!institution.trim())
-              errors.push(`Institution is required in education ${index + 1}`);
-            if (!startDate || !endDate)
-              errors.push(
-                `Start and End dates are required in education ${index + 1}`
-              );
-          }
-        );
-        break;
-      }
-
-      case "skills": {
-        resumeData.skills.forEach(({ name, progress }, index) => {
-          if (!name.trim())
-            errors.push(`Skill name is required in skill ${index + 1}`);
-          if (progress < 1 || progress > 100)
-            errors.push(
-              `Skill progress must be between 1 and 100 in skill ${index + 1}`
-            );
-        });
-        break;
-      }
-
-      case "projects": {
-        resumeData.projects.forEach(({ title, description }, index) => {
-          if (!title.trim())
-            errors.push(`Project Title is required in project ${index + 1}`);
-          if (!description.trim())
-            errors.push(
-              `Project description is required in project ${index + 1}`
-            );
-        });
-        break;
-      }
-
-      case "certifications": {
-        resumeData.certifications.forEach(({ title, issuer }, index) => {
-          if (!title.trim())
-            errors.push(
-              `Certification Title is required in certification ${index + 1}`
-            );
-          if (!issuer.trim())
-            errors.push(`Issuer is required in certification ${index + 1}`);
-        });
-        break;
-      }
-
-      case "additionalInfo": {
-        if (
-          resumeData.languages.length === 0 ||
-          !resumeData.languages[0].name?.trim()
-        ) {
-          errors.push("At least one language is required");
-        }
-        if (
-          resumeData.interests.length === 0 ||
-          !resumeData.interests[0]?.trim()
-        ) {
-          errors.push("At least one interest is required");
-        }
-        break;
-      }
-
-      default:
-        break;
-    }
-
-    if (errors.length > 0) {
-      setErrorMsg(errors.join(", "));
-      return;
-    }
-
-    setErrorMsg("");
-    goToNextStep();
-  };
-
-  const goToNextStep = () => {
+  const goToNextStep = useCallback(() => {
     const pages = [
       "profile-info",
       "contact-info",
@@ -382,7 +277,110 @@ const EditResume = () => {
       setProgress(percent);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  };
+  }, [currentPage]);
+
+  // useEffect(() => {
+  //   calculateCompletion();
+  // }, [resumeData]);
+
+  // Validate Inputs
+  const validateAndNext = useCallback(() => {
+    const errors = [];
+
+    switch (currentPage) {
+      case "profile-info": {
+        const { fullName, designation, summary } = resumeData.profileInfo;
+        if (!fullName.trim()) errors.push("姓名为必填项");
+        if (!designation.trim()) errors.push("职位为必填项");
+        if (!summary.trim()) errors.push("个人简介为必填项");
+        break;
+      }
+
+      case "contact-info": {
+        const { email, phone } = resumeData.contactInfo;
+        if (!email.trim() || !/^\S+@\S+\.\S+$/.test(email))
+          errors.push("请输入有效的邮箱地址");
+        if (!phone.trim() || !/^\d{10}$/.test(phone))
+          errors.push("请输入有效的 10 位手机号");
+        break;
+      }
+
+      case "work-experience": {
+        resumeData.workExperience.forEach(
+          ({ company, role, startDate, endDate }, index) => {
+            if (!company || !company.trim()) errors.push(`第 ${index + 1} 条工作经历缺少公司名称`);
+            if (!role || !role.trim()) errors.push(`第 ${index + 1} 条工作经历缺少职位`);
+            if (!startDate || !endDate) errors.push(`第 ${index + 1} 条工作经历需填写起止日期`);
+          }
+        );
+        break;
+      }
+
+      case "education-info": {
+        resumeData.education.forEach(
+          ({ degree, institution, startDate, endDate }, index) => {
+            if (!degree.trim()) errors.push(`第 ${index + 1} 条教育经历缺少学位/学历`);
+            if (!institution.trim()) errors.push(`第 ${index + 1} 条教育经历缺少学校/机构`);
+            if (!startDate || !endDate) errors.push(`第 ${index + 1} 条教育经历需填写起止日期`);
+          }
+        );
+        break;
+      }
+
+      case "skills": {
+        resumeData.skills.forEach(({ name, progress }, index) => {
+          if (!name.trim()) errors.push(`第 ${index + 1} 项技能缺少名称`);
+          if (progress < 1 || progress > 100) errors.push(`第 ${index + 1} 项技能的熟练度需在 1-100 之间`);
+        });
+        break;
+      }
+
+      case "projects": {
+        resumeData.projects.forEach(({ title, description }, index) => {
+          if (!title.trim()) errors.push(`第 ${index + 1} 个项目缺少标题`);
+          if (!description.trim()) errors.push(`第 ${index + 1} 个项目缺少描述`);
+        });
+        break;
+      }
+
+      case "certifications": {
+        resumeData.certifications.forEach(({ title, issuer }, index) => {
+          if (!title.trim()) errors.push(`第 ${index + 1} 个证书缺少名称`);
+          if (!issuer.trim()) errors.push(`第 ${index + 1} 个证书缺少颁发机构`);
+        });
+        break;
+      }
+
+      case "additionalInfo": {
+        if (
+          resumeData.languages.length === 0 ||
+          !resumeData.languages[0].name?.trim()
+        ) {
+          errors.push("至少填写一种语言");
+        }
+        if (
+          resumeData.interests.length === 0 ||
+          !resumeData.interests[0]?.trim()
+        ) {
+          errors.push("至少填写一个兴趣爱好");
+        }
+        break;
+      }
+
+      default:
+        break;
+    }
+
+    if (errors.length > 0) {
+      setErrorMsg(errors.join(", "));
+      return;
+    }
+
+    setErrorMsg("");
+    goToNextStep();
+  }, [currentPage, resumeData, goToNextStep]);
+
+ 
 
   const goBack = () => {
     const pages = [
@@ -465,9 +463,8 @@ const EditResume = () => {
         API_PATHS.RESUME.GET_BY_ID(resumeId)
       );
 
-      if (response.data && response.data.profileInfo) {
-        const resumeInfo = response.data;
-
+      const resumeInfo = response?.data?.resume;
+      if (resumeInfo) {
         setResumeData((prevState) => ({
           ...prevState,
           title: resumeInfo?.title || "Untitled",
@@ -487,9 +484,32 @@ const EditResume = () => {
       }
     } catch (error) {
       console.error("Error fetching resume:", error);
-      toast.error("Failed to load resume data");
+      toast.error("加载简历数据失败");
     }
   }, [resumeId]);
+
+
+  const updateResumeDetails = useCallback(async (thumbnailLink, options = {}) => {
+    const { silent = false, showToast = false } = options;
+    try {
+      if (!silent) setIsLoading(true);
+
+      await axiosInstance.put(API_PATHS.RESUME.UPDATE(resumeId), {
+        ...resumeData,
+        thumbnailLink: thumbnailLink || "",
+        completion: completionPercentage,
+      });
+
+      if (showToast) {
+        toast.success("自动保存成功");
+      }
+    } catch (err) {
+      console.error("Error updating resume:", err);
+      toast.error("Failed to update resume details");
+    } finally {
+      if (!silent) setIsLoading(false);
+    }
+  }, [resumeId, resumeData, completionPercentage]);
 
   const uploadResumeImages = useCallback(async () => {
     try {
@@ -530,46 +550,31 @@ const EditResume = () => {
       const { thumbnailLink } = uploadResponse.data;
       await updateResumeDetails(thumbnailLink);
 
-      toast.success("Resume Updated Successfully");
+      toast.success("简历更新成功");
       navigate("/dashboard");
     } catch (error) {
       console.error("Error Uploading Images:", error);
-      toast.error("Failed to upload images");
+      toast.error("上传图片失败");
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [resumeId, updateResumeDetails, navigate]);
 
-  const updateResumeDetails = useCallback(async (thumbnailLink) => {
-    try {
-      setIsLoading(true);
 
-      await axiosInstance.put(API_PATHS.RESUME.UPDATE(resumeId), {
-        ...resumeData,
-        thumbnailLink: thumbnailLink || "",
-        completion: completionPercentage,
-      });
-    } catch (err) {
-      console.error("Error updating resume:", err);
-      toast.error("Failed to update resume details");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
   const handleDeleteResume = useCallback(async () => {
     try {
       setIsLoading(true);
       await axiosInstance.delete(API_PATHS.RESUME.DELETE(resumeId));
-      toast.success("Resume deleted successfully");
+      toast.success("简历删除成功");
       navigate("/dashboard");
     } catch (error) {
       console.error("Error deleting resume:", error);
-      toast.error("Failed to delete resume");
+      toast.error("删除简历失败");
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [resumeId, navigate]);
   const memoizedForm = useMemo(() => {
     switch (currentPage) {
       case "profile-info":
@@ -675,18 +680,18 @@ const EditResume = () => {
       default:
         return null;
     }
-  }, [currentPage, resumeData, updateSection, updateArrayItem, addArrayItem, removeArrayItem]);
+  }, [currentPage, resumeData, updateSection, updateArrayItem, addArrayItem, removeArrayItem, validateAndNext]);
 
   const downloadPDF = useCallback(async () => {
     const element = resumeDownloadRef.current;
     if (!element) {
-      toast.error("Failed to generate PDF. Please try again.");
+      toast.error("生成 PDF 失败，请重试。");
       return;
     }
 
     setIsDownloading(true);
     setDownloadSuccess(false);
-    const toastId = toast.loading("Generating PDF");
+    const toastId = toast.loading("正在生成 PDF");
 
     const override = document.createElement("style");
     override.id = "__pdf_color_override__";
@@ -724,23 +729,129 @@ const EditResume = () => {
         .from(element)
         .save();
 
-      toast.success("PDF downloaded successfully!", { id: toastId });
+      toast.success("PDF 下载成功", { id: toastId });
       setDownloadSuccess(true);
       setTimeout(() => setDownloadSuccess(false), 3000);
     } catch (err) {
       console.error("PDF error:", err);
-      toast.error(`Failed to generate PDF: ${err.message}`, { id: toastId });
+      toast.error(`生成 PDF 失败: ${err.message}`, { id: toastId });
     } finally {
       document.getElementById("__pdf_color_override__")?.remove();
       setIsDownloading(false);
     }
-  }, [resumeData, resumeId]);
+  }, [resumeData]);
+
+  const exportAsPNG = useCallback(async () => {
+    const element = resumeDownloadRef.current;
+    if (!element) {
+      toast.error("未找到导出区域");
+      return;
+    }
+    try {
+      const override = document.createElement("style");
+      override.id = "__png_color_override__";
+      override.textContent = `
+        * {
+          color: #000 !important;
+          background-color: #fff !important;
+          border-color: #000 !important;
+          box-shadow: none !important;
+          background-image: none !important;
+        }
+      `;
+      document.head.appendChild(override);
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#FFFFFF",
+        windowWidth: element.scrollWidth,
+      });
+      document.getElementById("__png_color_override__")?.remove();
+
+      const dataUrl = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = `${resumeData.title.replace(/[^a-z0-9\u4e00-\u9fa5]/gi, "_")}.png`;
+      link.click();
+      toast.success("PNG 导出成功");
+    } catch (e) {
+      console.error("PNG export error:", e);
+      toast.error("PNG 导出失败");
+    }
+  }, [resumeData]);
+
+  const exportAsImagePDF = useCallback(async () => {
+    const element = resumeDownloadRef.current;
+    if (!element) {
+      toast.error("未找到导出区域");
+      return;
+    }
+    try {
+      const override = document.createElement("style");
+      override.id = "__imgpdf_color_override__";
+      override.textContent = `
+        * {
+          color: #000 !important;
+          background-color: #fff !important;
+          border-color: #000 !important;
+          box-shadow: none !important;
+          background-image: none !important;
+        }
+      `;
+      document.head.appendChild(override);
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#FFFFFF",
+        windowWidth: element.scrollWidth,
+      });
+      document.getElementById("__imgpdf_color_override__")?.remove();
+
+      const dataUrl = canvas.toDataURL("image/png");
+
+      const img = new Image();
+      img.src = dataUrl;
+      await new Promise((resolve) => (img.onload = resolve));
+
+      const pdf = new window.jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+      const pageW = 210;
+      const pageH = 297;
+      const margin = 10;
+      const maxW = pageW - margin * 2;
+      const maxH = pageH - margin * 2;
+
+      const imgWmm = maxW;
+      const imgHmm = Math.min(maxH, (img.height / img.width) * imgWmm);
+      const offsetX = margin;
+      const offsetY = (pageH - imgHmm) / 2;
+
+      pdf.addImage(dataUrl, "PNG", offsetX, offsetY, imgWmm, imgHmm);
+      pdf.save(`${resumeData.title.replace(/[^a-z0-9\u4e00-\u9fa5]/gi, "_")}.pdf`);
+      toast.success("图片PDF 导出成功");
+    } catch (e) {
+      console.error("Image PDF export error:", e);
+      toast.error("图片PDF 导出失败");
+    }
+  }, [resumeData]);
 
   useEffect(() => {
     if (resumeId) {
       fetchResumeDetailsById();
     }
   }, [resumeId, fetchResumeDetailsById]);
+
+  // Auto-save interval
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      updateResumeDetails(undefined, { silent: true, showToast: true });
+    }, 1 * 10 * 1000);
+
+    return () => clearInterval(intervalId);
+  }, [updateResumeDetails]);
 
   return (
     <DashboardLayout>
@@ -763,7 +874,7 @@ const EditResume = () => {
               disabled={isLoading}
             >
               <Trash2 size={16} />
-              <span className="text-sm">Delete</span>
+              <span className="text-sm">删除</span>
             </button>
 
             <button
@@ -772,7 +883,7 @@ const EditResume = () => {
               disabled={isLoading}
             >
               <Download size={16} />
-              <span className="text-sm">Preview</span>
+              <span className="text-sm">预览</span>
             </button>
           </div>
         </div>
@@ -796,7 +907,7 @@ const EditResume = () => {
                   disabled={isLoading}
                 >
                   <ArrowLeft size={16} />
-                  <span>Back</span>
+                  <span>上一步</span>
                 </button>
                 <button
                   className={buttonStyles.save}
@@ -808,7 +919,7 @@ const EditResume = () => {
                   ) : (
                     <Save size={16} />
                   )}
-                  {isLoading ? "Saving..." : "Save & Exit"}
+                  {isLoading ? "保存中..." : "保存并退出"}
                 </button>
 
                 <button
@@ -817,9 +928,7 @@ const EditResume = () => {
                   disabled={isLoading}
                 >
                   {currentPage === "additionalInfo" && <Download size={16} />}
-                  {currentPage === "additionalInfo"
-                    ? "Preview & Download"
-                    : "Next"}
+                  {currentPage === "additionalInfo" ? "预览并下载" : "下一步"}
                   {currentPage === "additionalInfo" && (
                     <ArrowLeft size={16} className="rotate-100" />
                   )}
@@ -833,7 +942,7 @@ const EditResume = () => {
               <div className="text-center mb-4">
                 <div className={statusStyles.completionBadge}>
                   <div className={iconStyles.pulseDot}></div>
-                  <span>Preview - {completionPercentage}% Complete</span>
+                  <span>预览 - 完成度 {completionPercentage}%</span>
                 </div>
               </div>
 
@@ -860,11 +969,7 @@ const EditResume = () => {
         title={resumeData.title}
         showActionBtn
         actionBtnText={
-          isDownloading
-            ? "Generating..."
-            : downloadSuccess
-              ? "Downloaded"
-              : "Download PDF"
+          isDownloading ? "生成中..." : downloadSuccess ? "已下载" : "下载 PDF"
         }
         actionBtnIcon={
           isDownloading ? (
@@ -895,6 +1000,15 @@ const EditResume = () => {
                 />
               </div>
             </div>
+          </div>
+
+          <div className="flex flex-wrap gap-3 mt-4 justify-end">
+            <button className={buttonStyles.back} onClick={exportAsPNG} disabled={isDownloading || isLoading}>
+              导出 PNG
+            </button>
+            <button className={buttonStyles.save} onClick={exportAsImagePDF} disabled={isDownloading || isLoading}>
+              导出图片 PDF
+            </button>
           </div>
         </div>
       </Modal>

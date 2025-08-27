@@ -26,21 +26,21 @@ export const AdditionalInfoForm = React.memo(
   }) => {
     return (
       <div className={additionalInfoStyles.container}>
-        <h2 className={additionalInfoStyles.heading}>Additional Information</h2>
+        <h2 className={additionalInfoStyles.heading}>附加信息</h2>
 
         {/* Languages Section */}
         <div className="mb-10">
           <h3 className={additionalInfoStyles.sectionHeading}>
             <div className={additionalInfoStyles.dotViolet}></div>
-            Languages
+            语言
           </h3>
           <div className="space-y-6">
             {languages?.map((lang, index) => (
               <div key={index} className={additionalInfoStyles.languageItem}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                   <Input
-                    label="Language"
-                    placeholder="e.g. English"
+                    label="语言"
+                    placeholder="例如：英语"
                     value={lang.name || ""}
                     onChange={({ target }) =>
                       updateArrayItem("languages", index, "name", target.value)
@@ -48,7 +48,7 @@ export const AdditionalInfoForm = React.memo(
                   />
                   <div>
                     <label className="block text-sm font-bold text-slate-700 mb-4">
-                      Proficiency
+                      熟练度
                     </label>
                     <RatingInput
                       value={lang.progress || 0}
@@ -80,7 +80,7 @@ export const AdditionalInfoForm = React.memo(
                 addArrayItem("languages", { name: "", progress: 0 })
               }
             >
-              <Plus size={16} /> Add Language
+              <Plus size={16} /> 添加语言
             </button>
           </div>
         </div>
@@ -89,13 +89,13 @@ export const AdditionalInfoForm = React.memo(
         <div className="mb-6">
           <h3 className={additionalInfoStyles.sectionHeading}>
             <div className={additionalInfoStyles.dotOrange}></div>
-            Interests
+            兴趣爱好
           </h3>
           <div className="space-y-4">
             {interests?.map((interest, index) => (
               <div key={index} className={additionalInfoStyles.interestItem}>
                 <Input
-                  placeholder="e.g. Reading, Photography"
+                  placeholder="例如：阅读、摄影"
                   value={interest || ""}
                   onChange={({ target }) =>
                     updateArrayItem("interests", index, null, target.value)
@@ -118,7 +118,7 @@ export const AdditionalInfoForm = React.memo(
               className={`${commonStyles.addButtonBase} ${additionalInfoStyles.addButtonInterest}`}
               onClick={() => addArrayItem("interests", "")}
             >
-              <Plus size={16} /> Add Interest
+              <Plus size={16} /> 添加兴趣
             </button>
           </div>
         </div>
@@ -132,14 +132,14 @@ export const CertificationInfoForm = React.memo(
   ({ certifications, updateArrayItem, addArrayItem, removeArrayItem }) => {
     return (
       <div className={certificationInfoStyles.container}>
-        <h2 className={certificationInfoStyles.heading}>Certifications</h2>
+        <h2 className={certificationInfoStyles.heading}>证书</h2>
         <div className="space-y-6 mb-6">
           {certifications.map((cert, index) => (
             <div key={index} className={certificationInfoStyles.item}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input
-                  label="Certificate Title"
-                  placeholder="Full Stack Web Developer"
+                  label="证书名称"
+                  placeholder="全栈开发工程师"
                   value={cert.title || ""}
                   onChange={({ target }) =>
                     updateArrayItem(index, "title", target.value)
@@ -147,8 +147,8 @@ export const CertificationInfoForm = React.memo(
                 />
 
                 <Input
-                  label="Issuer"
-                  placeholder="Coursera / Google / etc."
+                  label="颁发机构"
+                  placeholder="例如：Coursera / Google 等"
                   value={cert.issuer || ""}
                   onChange={({ target }) =>
                     updateArrayItem(index, "issuer", target.value)
@@ -156,7 +156,7 @@ export const CertificationInfoForm = React.memo(
                 />
 
                 <Input
-                  label="Year"
+                  label="年份"
                   placeholder="2024"
                   value={cert.year || ""}
                   onChange={({ target }) =>
@@ -189,7 +189,7 @@ export const CertificationInfoForm = React.memo(
             }
           >
             <Plus size={16} />
-            Add Certification
+            添加证书
           </button>
         </div>
       </div>
@@ -201,20 +201,20 @@ export const CertificationInfoForm = React.memo(
 export const ContactInfoForm = React.memo(({ contactInfo, updateSection }) => {
   return (
     <div className={contactInfoStyles.container}>
-      <h2 className={contactInfoStyles.heading}>Contact Information</h2>
+      <h2 className={contactInfoStyles.heading}>联系方式</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="md:col-span-2">
           <Input
-            label="Address"
-            placeholder="Short Address"
+            label="地址"
+            placeholder="例如：北京市朝阳区"
             value={contactInfo.location || ""}
             onChange={({ target }) => updateSection("location", target.value)}
           />
         </div>
 
         <Input
-          label="Email"
+          label="邮箱"
           placeholder="john@example.com"
           type="email"
           value={contactInfo.email || ""}
@@ -222,7 +222,7 @@ export const ContactInfoForm = React.memo(({ contactInfo, updateSection }) => {
         />
 
         <Input
-          label="Phone Number"
+          label="手机号"
           placeholder="1234567890"
           value={contactInfo.phone || ""}
           onChange={({ target }) => updateSection("phone", target.value)}
@@ -244,7 +244,7 @@ export const ContactInfoForm = React.memo(({ contactInfo, updateSection }) => {
 
         <div className="md:col-span-2">
           <Input
-            label="Portfolio / Website"
+            label="个人网站"
             placeholder="https://yourwebsite.com"
             value={contactInfo.website || ""}
             onChange={({ target }) => updateSection("website", target.value)}
@@ -260,14 +260,14 @@ export const EducationDetailsForm = React.memo(
   ({ educationInfo, updateArrayItem, addArrayItem, removeArrayItem }) => {
     return (
       <div className={educationDetailsStyles.container}>
-        <h2 className={educationDetailsStyles.heading}>Education</h2>
+        <h2 className={educationDetailsStyles.heading}>教育经历</h2>
         <div className="space-y-6 mb-6">
           {educationInfo.map((education, index) => (
             <div key={index} className={educationDetailsStyles.item}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input
-                  label="Degree"
-                  placeholder="BTech in Computer Science"
+                  label="学位/学历"
+                  placeholder="计算机科学学士"
                   value={education.degree || ""}
                   onChange={({ target }) =>
                     updateArrayItem(index, "degree", target.value)
@@ -275,8 +275,8 @@ export const EducationDetailsForm = React.memo(
                 />
 
                 <Input
-                  label="Institution"
-                  placeholder="XYZ University"
+                  label="学校/机构"
+                  placeholder="某某大学"
                   value={education.institution || ""}
                   onChange={({ target }) =>
                     updateArrayItem(index, "institution", target.value)
@@ -284,7 +284,7 @@ export const EducationDetailsForm = React.memo(
                 />
 
                 <Input
-                  label="Start Date"
+                  label="开始时间"
                   type="month"
                   value={education.startDate || ""}
                   onChange={({ target }) =>
@@ -293,7 +293,7 @@ export const EducationDetailsForm = React.memo(
                 />
 
                 <Input
-                  label="End Date"
+                  label="结束时间"
                   type="month"
                   value={education.endDate || ""}
                   onChange={({ target }) =>
@@ -325,7 +325,7 @@ export const EducationDetailsForm = React.memo(
               })
             }
           >
-            <Plus size={16} /> Add Education
+            <Plus size={16} /> 添加教育经历
           </button>
         </div>
       </div>
@@ -337,20 +337,20 @@ export const EducationDetailsForm = React.memo(
 export const ProfileInfoForm = React.memo(({ profileData, updateSection }) => {
   return (
     <div className={profileInfoStyles.container}>
-      <h2 className={profileInfoStyles.heading}>Personal Information</h2>
+      <h2 className={profileInfoStyles.heading}>个人信息</h2>
 
       <div className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
-            label="Full Name"
-            placeholder="John Doe"
+            label="姓名"
+            placeholder="张三"
             value={profileData.fullName || ""}
             onChange={({ target }) => updateSection("fullName", target.value)}
           />
 
           <Input
-            label="Designation"
-            placeholder="Full Stack Developer"
+            label="职位"
+            placeholder="全栈开发工程师"
             value={profileData.designation || ""}
             onChange={({ target }) =>
               updateSection("designation", target.value)
@@ -359,12 +359,12 @@ export const ProfileInfoForm = React.memo(({ profileData, updateSection }) => {
 
           <div className="md:col-span-2">
             <label className="block text-sm font-bold text-slate-700 mb-3">
-              Summary
+              个人简介
             </label>
             <textarea
               className={profileInfoStyles.textarea}
               rows={4}
-              placeholder="Short introduction about yourself"
+              placeholder="请简要介绍你自己"
               value={profileData.summary || ""}
               onChange={({ target }) => updateSection("summary", target.value)}
             />
@@ -380,15 +380,15 @@ export const ProjectDetailForm = React.memo(
   ({ projectInfo, updateArrayItem, addArrayItem, removeArrayItem }) => {
     return (
       <div className={projectDetailStyles.container}>
-        <h2 className={projectDetailStyles.heading}>Projects</h2>
+        <h2 className={projectDetailStyles.heading}>项目经历</h2>
         <div className="space-y-6 mb-6">
           {projectInfo.map((project, index) => (
             <div key={index} className={projectDetailStyles.item}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="md:col-span-2">
                   <Input
-                    label="Project Title"
-                    placeholder="Portfolio Website"
+                    label="项目标题"
+                    placeholder="个人作品集网站"
                     value={project.title || ""}
                     onChange={({ target }) =>
                       updateArrayItem(index, "title", target.value)
@@ -398,10 +398,10 @@ export const ProjectDetailForm = React.memo(
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-bold text-slate-700 mb-3">
-                    Description
+                    项目描述
                   </label>
                   <textarea
-                    placeholder="Short description about the project"
+                    placeholder="请简要描述该项目"
                     className={projectDetailStyles.textarea}
                     rows={3}
                     value={project.description || ""}
@@ -412,7 +412,7 @@ export const ProjectDetailForm = React.memo(
                 </div>
 
                 <Input
-                  label="GitHub Link"
+                  label="GitHub 链接"
                   placeholder="https://github.com/username/project"
                   value={project.github || ""}
                   onChange={({ target }) =>
@@ -421,7 +421,7 @@ export const ProjectDetailForm = React.memo(
                 />
 
                 <Input
-                  label="Live Demo URL"
+                  label="在线预览地址"
                   placeholder="https://yourproject.live"
                   value={project.liveDemo || ""}
                   onChange={({ target }) =>
@@ -455,7 +455,7 @@ export const ProjectDetailForm = React.memo(
             }
           >
             <Plus size={16} />
-            Add Project
+            添加项目
           </button>
         </div>
       </div>
@@ -468,13 +468,13 @@ export const SkillsInfoForm = React.memo(
   ({ skillsInfo, updateArrayItem, addArrayItem, removeArrayItem }) => {
     return (
       <div className={skillsInfoStyles.container}>
-        <h2 className={skillsInfoStyles.heading}>Skills</h2>
+        <h2 className={skillsInfoStyles.heading}>技能</h2>
         <div className="space-y-6 mb-6">
           {skillsInfo.map((skill, index) => (
             <div key={index} className={skillsInfoStyles.item}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input
-                  label="Skill Name"
+                  label="技能名称"
                   placeholder="JavaScript"
                   value={skill.name || ""}
                   onChange={({ target }) =>
@@ -484,8 +484,7 @@ export const SkillsInfoForm = React.memo(
 
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-3">
-                    Proficiency (
-                    {skill.progress ? Math.round(skill.progress / 20) : 0}/5)
+                    熟练度（{skill.progress ? Math.round(skill.progress / 20) : 0}/5）
                   </label>
                   <div className="mt-2">
                     <RatingInput
@@ -523,7 +522,7 @@ export const SkillsInfoForm = React.memo(
               })
             }
           >
-            <Plus size={16} /> Add Skill
+            <Plus size={16} /> 添加技能
           </button>
         </div>
       </div>
@@ -536,14 +535,14 @@ export const WorkExperienceForm = React.memo(
   ({ workExperience, updateArrayItem, addArrayItem, removeArrayItem }) => {
     return (
       <div className={workExperienceStyles.container}>
-        <h2 className={workExperienceStyles.heading}>Work Experience</h2>
+        <h2 className={workExperienceStyles.heading}>工作经历</h2>
         <div className="space-y-6 mb-6">
           {workExperience.map((experience, index) => (
             <div key={index} className={workExperienceStyles.item}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input
-                  label="Company"
-                  placeholder="ABC Corp"
+                  label="公司"
+                  placeholder="ABC 公司"
                   value={experience.company || ""}
                   onChange={({ target }) =>
                     updateArrayItem(index, "company", target.value)
@@ -551,8 +550,8 @@ export const WorkExperienceForm = React.memo(
                 />
 
                 <Input
-                  label="Role"
-                  placeholder="Frontend Developer"
+                  label="职位"
+                  placeholder="前端开发工程师"
                   value={experience.role || ""}
                   onChange={({ target }) =>
                     updateArrayItem(index, "role", target.value)
@@ -560,7 +559,7 @@ export const WorkExperienceForm = React.memo(
                 />
 
                 <Input
-                  label="Start Date"
+                  label="开始时间"
                   type="month"
                   value={experience.startDate || ""}
                   onChange={({ target }) =>
@@ -569,7 +568,7 @@ export const WorkExperienceForm = React.memo(
                 />
 
                 <Input
-                  label="End Date"
+                  label="结束时间"
                   type="month"
                   value={experience.endDate || ""}
                   onChange={({ target }) =>
@@ -580,10 +579,10 @@ export const WorkExperienceForm = React.memo(
 
               <div className="mt-6">
                 <label className="block text-sm font-bold text-slate-700 mb-3">
-                  Description
+                  工作描述
                 </label>
                 <textarea
-                  placeholder="What did you do in this role?"
+                  placeholder="请描述你在该岗位的主要职责/成果"
                   className={workExperienceStyles.textarea}
                   rows={3}
                   value={experience.description || ""}
@@ -619,7 +618,7 @@ export const WorkExperienceForm = React.memo(
             }
           >
             <Plus size={16} />
-            Add Work Experience
+            添加工作经历
           </button>
         </div>
       </div>

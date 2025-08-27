@@ -34,7 +34,7 @@ export const ProfileInfoCard = () => {
         <div>
           <div className={cardStyles.profileName}>{user.name || ""}</div>
           <button className={cardStyles.logoutButton} onClick={handleLogout}>
-            Logout
+            退出登录
           </button>
         </div>
       </div>
@@ -43,7 +43,7 @@ export const ProfileInfoCard = () => {
 };
 
 export const ResumeSummaryCard = ({
-  title = "Untitled Resume",
+  title = "未命名简历",
   createdAt = null,
   updatedAt = null,
   onSelect,
@@ -53,7 +53,7 @@ export const ResumeSummaryCard = ({
   const [isHovered, setIsHovered] = useState(false);
 
   const formattedCreatedDate = createdAt
-    ? new Date(createdAt).toLocaleDateString("en-US", {
+    ? new Date(createdAt).toLocaleDateString("zh-CN", {
         month: "short",
         day: "numeric",
         year: "numeric",
@@ -61,7 +61,7 @@ export const ResumeSummaryCard = ({
     : "—";
 
   const formattedUpdatedDate = updatedAt
-    ? new Date(updatedAt).toLocaleDateString("en-US", {
+    ? new Date(updatedAt).toLocaleDateString("zh-CN", {
         month: "short",
         day: "numeric",
         year: "numeric",
@@ -130,12 +130,12 @@ export const ResumeSummaryCard = ({
           </div>
           <span className={cardStyles.emptyPreviewText}>{title}</span>
           <span className={cardStyles.emptyPreviewSubtext}>
-            {completion === 0 ? "Start building" : `${completion}% completed`}
+            {completion === 0 ? "开始创建" : `${completion}% 已完成`}
           </span>
 
           {/* Mini resume sections indicator */}
           <div className="mt-4 flex gap-2">
-            {["Profile", "Work", "Skills", "Edu"].map((section, i) => (
+            {["资料", "工作", "技能", "教育"].map((section, i) => (
               <div
                 key={i}
                 className={`px-2 py-1 text-xs rounded-md ${
@@ -160,14 +160,14 @@ export const ResumeSummaryCard = ({
                   if (onSelect) onSelect();
                 }}
                 className={cardStyles.editButton}
-                title="Edit"
+                title="编辑"
               >
                 <Edit size={18} className={cardStyles.buttonIcon} />
               </button>
               <button
                 onClick={handleDeleteClick}
                 className={cardStyles.deleteButton}
-                title="Delete"
+                title="删除"
               >
                 <Trash2 size={18} className={cardStyles.buttonIcon} />
               </button>
@@ -183,8 +183,8 @@ export const ResumeSummaryCard = ({
             <h5 className={cardStyles.title}>{title}</h5>
             <div className={cardStyles.dateInfo}>
               <Clock size={12} />
-              <span>Created At: {formattedCreatedDate}</span>
-              <span className="ml-2">Updated At: {formattedUpdatedDate}</span>
+              <span>创建时间: {formattedCreatedDate}</span>
+              <span className="ml-2">更新时间: {formattedUpdatedDate}</span>
             </div>
           </div>
         </div>
@@ -207,13 +207,13 @@ export const ResumeSummaryCard = ({
         <div className="flex justify-between items-center mt-2">
           <span className="text-xs font-medium text-gray-500">
             {completion < 50
-              ? "Getting Started"
+              ? "刚刚开始"
               : completion < 80
-              ? "Almost There"
-              : "Ready to Go!"}
+              ? "接近完成"
+              : "已就绪"}
           </span>
           <span className="text-xs font-bold text-gray-700">
-            {completion}% Complete
+            {completion}% 完成度
           </span>
         </div>
       </div>
@@ -258,7 +258,7 @@ export const TemplateCard = ({ thumbnailImg, isSelected, onSelect }) => {
           <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-2xl flex items-center justify-center mb-3">
             <Edit className="text-white" size={20} />
           </div>
-          <span className="text-gray-700 font-bold">No Preview</span>
+          <span className="text-gray-700 font-bold">暂无预览</span>
         </div>
       )}
     </div>

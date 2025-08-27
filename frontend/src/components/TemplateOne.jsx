@@ -92,7 +92,7 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
             <div className="flex items-center mb-1">
               <RiLinkedinLine className="mr-1" />
               <a href={contactInfo.linkedin} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                LinkedIn
+                领英
               </a>
             </div>
           )}
@@ -108,7 +108,7 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
             <div className="flex items-center">
               <LuGlobe className="mr-1" />
               <a href={contactInfo.website} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                Portfolio
+                个人网站
               </a>
             </div>
           )}
@@ -118,7 +118,7 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
       {/* Professional Summary */}
       {profileInfo.summary && (
         <div className="resume-section mb-3">
-          <Title text="Professional Summary" />
+          <Title text="个人简介" />
           <p className="text-sm leading-relaxed">{profileInfo.summary}</p>
         </div>
       )}
@@ -128,7 +128,7 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
         <div className="col-span-2 space-y-4">
           {workExperience.length > 0 && (
             <div className="resume-section">
-              <Title text="Work Experience" />
+              <Title text="工作经历" />
               <div className="space-y-6">
                 {workExperience.map((exp, i) => (
                   <WorkExperience
@@ -149,7 +149,7 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
 
           {projects.length > 0 && (
             <div className="resume-section">
-              <Title text="Projects" />
+              <Title text="项目经历" />
               <div className="space-y-4">
                 {projects.map((proj, i) => (
                   <ProjectInfo
@@ -171,7 +171,7 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
         <div className="col-span-1 space-y-6">
           {skills.length > 0 && (
             <div className="resume-section">
-              <Title text="Skills" />
+              <Title text="技能" />
               <div className="flex flex-wrap gap-2">
                 {skills.map((skill, i) => (
                   <span
@@ -188,7 +188,7 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
 
           {education.length > 0 && (
             <div className="resume-section">
-              <Title text="Education" />
+              <Title text="教育经历" />
               <div className="space-y-4 pb-2">
                 {education.map((edu, i) => (
                   <EducationInfo
@@ -208,7 +208,7 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
 
           {certifications.length > 0 && (
             <div className="resume-section">
-              <Title text="Certifications" />
+              <Title text="证书" />
               <div className="space-y-2">
                 {certifications.map((cert, i) => (
                   <CertificationInfo
@@ -226,7 +226,7 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
 
           {languages.length > 0 && (
             <div className="resume-section">
-              <Title text="Languages" />
+              <Title text="语言" />
               <div className="flex flex-wrap gap-2">
                 {languages.map((lang, i) => (
                   <span
@@ -243,7 +243,7 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
 
           {interests.length > 0 && interests.some((i) => i) && (
             <div className="resume-section">
-              <Title text="Interests" />
+              <Title text="兴趣爱好" />
               <div className="flex flex-wrap gap-2">
                 {interests.map((int, i) =>
                   int ? (

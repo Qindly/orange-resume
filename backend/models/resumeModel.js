@@ -28,7 +28,7 @@ const ResumeSchema = new mongoose.Schema({
     contactInfo:{
         email:String,
         phone:String,
-        loacation:String,
+        location:String,
         website:String,
         linkedin:String,
         github:String,

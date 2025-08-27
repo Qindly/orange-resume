@@ -19,15 +19,15 @@ const SignUp = ({ setCurrentPage }) => {
   const handleSignUp = async (e) => {
     e.preventDefault();
     if (!fullName) {
-      setError("Please enter your full name");
+      setError("请输入姓名");
       return;
     }
     if (!validateEmail(email)) {
-      setError("Please enter a valid email");
+      setError("请输入有效的邮箱");
       return;
     }
     if (!password) {
-      setError("Please enter a password");
+      setError("请输入密码");
       return;
     }
     setError("");
@@ -44,55 +44,51 @@ const SignUp = ({ setCurrentPage }) => {
         navigate("/dashboard");
       }
     } catch (error) {
-      setError(
-        error.response?.data?.message || "An error occurred during sign up"
-      );
+      setError(error.response?.data?.message || "注册时发生错误");
     }
   };
 
   return (
     <div className={styles.signupContainer}>
       <div className={styles.headerWrapper}>
-        <h3 className={styles.signupTitle}>Create Account</h3>
-        <p className={styles.signupSubtitle}>
-          Sign up to get started with Orange Resume
-        </p>
+        <h3 className={styles.signupTitle}>创建账户</h3>
+        <p className={styles.signupSubtitle}>注册以开始使用 Orange Resume</p>
       </div>
       <form onSubmit={handleSignUp} className={styles.signupForm}>
         <Input
-          label="Full Name"
+          label="姓名"
           value={fullName}
           type="text"
-          placeholder="Enter your full name"
+          placeholder="请输入姓名"
           onChange={(e) => setFullName(e.target.value)}
         />
         <Input
-          label="Email"
+          label="邮箱"
           value={email}
           type="email"
-          placeholder="Enter your email"
+          placeholder="请输入邮箱"
           onChange={(e) => setEmail(e.target.value)}
         />
         <Input
-          label="Password"
+          label="密码"
           value={password}
           type="password"
-          placeholder="Enter your password"
+          placeholder="请输入密码"
           onChange={(e) => setPassword(e.target.value)}
         />
         {error && <div className={styles.errorMessage}>{error}</div>}
         <button type="submit" className={styles.signupSubmit}>
-          Sign Up
+          注册
         </button>
 
         <p className={styles.switchText}>
-          Already have an account?
+          已有账号？
           <button
             type="button"
             onClick={() => setCurrentPage("login")}
             className={styles.signupSwitchButton}
           >
-            Sign In
+            去登录
           </button>
         </p>
       </form>

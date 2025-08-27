@@ -14,8 +14,8 @@ const CreateResumeForm = ({ onSuccess }) => {
   const handleCreateResume = async (e) => {
     e.preventDefault();
     if (!title) {
-      setError("Title is required");
-      toast.error("Please enter a resume title");
+      setError("标题为必填项");
+      toast.error("请输入简历标题");
       return;
     }
     setError("");
@@ -25,7 +25,7 @@ const CreateResumeForm = ({ onSuccess }) => {
         title,
       });
       if (response.data?.newResume?._id) {
-        toast.success("Resume created successfully!");
+        toast.success("简历创建成功！");
         onSuccess();
         // navigate('/dashboard');
         navigate(`/resume/${response.data.newResume._id}`);
@@ -36,7 +36,7 @@ const CreateResumeForm = ({ onSuccess }) => {
         setError(errorMessage);
         toast.error(errorMessage);
       } else {
-        const errorMessage = "An error occurred while creating the resume";
+        const errorMessage = "创建简历时发生错误";
         setError(errorMessage);
         toast.error(errorMessage);
       }
@@ -45,28 +45,23 @@ const CreateResumeForm = ({ onSuccess }) => {
 
   return (
     <div className="w-full max-w-md bg-white rounder-2xl border border-gray-100 shadow-lg p-5">
-      <h3 className="text-2xl font-bold text-gray-900 mb-4">
-        Create New Resume
-      </h3>
-      <p className="text-gray-600 mb-8">
-        Give your resume a title that best represents your skills and
-        experience.
-      </p>
+      <h3 className="text-2xl font-bold text-gray-900 mb-4">创建新简历</h3>
+      <p className="text-gray-600 mb-8">为你的简历起一个能代表你技能与经验的标题。</p>
 
       <form onSubmit={handleCreateResume}>
         <Input
-          label="Resume Title"
+          label="简历标题"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           error={error}
-          placeholder="Enter a title for your resume"
+          placeholder="请输入你的简历标题"
         />
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <button
           type="submit"
           className="w-full py-3 bg-gradient-to-r from-rose-500 to-pink-600 text-white font-black rounded-2xl hover:scale-105 hover:shadow-xl hover:shadow-rose-200 transition-all"
         >
-          Create Resume
+          创建简历
         </button>
       </form>
     </div>

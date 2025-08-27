@@ -19,15 +19,15 @@ const Login = ({ setCurrentPage }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!email) {
-      setError("Please enter your email");
+      setError("请输入邮箱");
       return;
     }
     if (!validateEmail(email)) {
-      setError("Please enter a valid email");
+      setError("请输入有效的邮箱");
       return;
     }
     if (!password) {
-      setError("Please enter a password");
+      setError("请输入密码");
       return;
     }
     setError("");
@@ -44,43 +44,39 @@ const Login = ({ setCurrentPage }) => {
         navigate("/dashboard");
       }
     } catch (error) {
-      setError(
-        error.response?.data?.message || "An error occurred during login"
-      );
+      setError(error.response?.data?.message || "登录时发生错误");
     }
   };
   return (
     <div className={styles.container}>
       <div className={styles.headerWrapper}>
-        <h3 className={styles.title}>Welcome Back</h3>
-        <p className={styles.subtitle}>
-          Please login to access your Orange Resume account
-        </p>
+        <h3 className={styles.title}>欢迎回来</h3>
+        <p className={styles.subtitle}>请登录以访问你的 Orange Resume 账户</p>
       </div>
 
       <form onSubmit={handleLogin} className={styles.form}>
         <Input
-          label="Email"
+          label="邮箱"
           type="email"
           value={email}
-          placeholder="Enter your email"
+          placeholder="请输入邮箱"
           onChange={(e) => setEmail(e.target.value)}
         />
         <Input
-          label="Password"
+          label="密码"
           type="password"
           value={password}
-          placeholder="Enter your password"
+          placeholder="请输入密码"
           onChange={(e) => setPassword(e.target.value)}
         />
         {error && <div className={styles.errorMessage}>{error}</div>}
         <button type="submit" className={styles.submitButton}>
-          Sign In
+          登录
         </button>
 
         <p className={styles.switchText}>
-          Don't have an account?{" "}
-          <button type="button" onClick={() => setCurrentPage("signup")} className={styles.switchButton}>Sign Up</button>
+          还没有账号？{" "}
+          <button type="button" onClick={() => setCurrentPage("signup")} className={styles.switchButton}>去注册</button>
         </p>
       </form>
     </div>

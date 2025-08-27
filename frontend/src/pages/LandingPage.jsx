@@ -43,7 +43,7 @@ const LandingPage = () => {
               <div className={landingPageStyles.logoIcon}>
                 <LayoutTemplate className={landingPageStyles.logoIconInner} />
               </div>
-              <span className={landingPageStyles.logoText}>ResumeXpert</span>
+              <span className={landingPageStyles.logoText}>OrangeResume 简历</span>
             </div>
             <button
               className={landingPageStyles.mobileMenuButton}
@@ -68,7 +68,7 @@ const LandingPage = () => {
                     className={landingPageStyles.desktopAuthButtonOverlay}
                   ></div>
                   <span className={landingPageStyles.desktopAuthButtonText}>
-                    Get Started
+                    立即开始
                   </span>
                 </button>
               )}
@@ -80,7 +80,7 @@ const LandingPage = () => {
                   {user ? (
                     <div className={landingPageStyles.mobileUserInfo}>
                       <div className={landingPageStyles.mobileUserWelcome}>
-                        Welcome, {user.name}!
+                        欢迎你，{user.name}！
                       </div>
                       <button
                         className={landingPageStyles.mobileDashboardButton}
@@ -89,7 +89,7 @@ const LandingPage = () => {
                           setMobileMenuOpen(false);
                         }}
                       >
-                        Go to Dashboard
+                        前往控制台
                       </button>
                     </div>
                   ) : (
@@ -100,7 +100,7 @@ const LandingPage = () => {
                         setMobileMenuOpen(false);
                       }}
                     >
-                      Get Started
+                      立即开始
                     </button>
                   )}
                 </div>
@@ -114,27 +114,24 @@ const LandingPage = () => {
           <section className={landingPageStyles.heroSection}>
             <div className={landingPageStyles.heroGrid}>
               <div className={landingPageStyles.heroLeft}>
-                <div className={landingPageStyles.tagline}>
-                  Professional Resume Builder
-                </div>
+                <div className={landingPageStyles.tagline}>专业简历生成器</div>
 
                 {/* 大标题 */}
                 <h1 className={landingPageStyles.heading}>
-                  <span className={landingPageStyles.headingText}>Craft</span>
+                  <span className={landingPageStyles.headingText}>使用</span>
                   <span className={landingPageStyles.headingGradient}>
                     {" "}
-                    Professional
+                    OrangeResume
                   </span>
                   <span className={landingPageStyles.headingText}>
                     {" "}
-                    Resumes
+                    专业简历
                   </span>
                 </h1>
 
                 {/* 详情介绍 */}
                 <p className={landingPageStyles.description}>
-                  Create a professional resume in minutes with our easy-to-use
-                  resume builder.
+                  创建一个专业简历，只需几分钟。
                 </p>
 
                 {/* 开始的两个选项 */}
@@ -147,7 +144,7 @@ const LandingPage = () => {
                       className={landingPageStyles.primaryButtonOverlay}
                     ></div>
                     <span className={landingPageStyles.primaryButtonContent}>
-                      Start Building
+                      开始创建
                       <ArrowRight
                         className={landingPageStyles.primaryButtonIcon}
                         size={18}
@@ -159,26 +156,26 @@ const LandingPage = () => {
                     className={landingPageStyles.secondaryButton}
                     onClick={handleCTA}
                   >
-                    View Templates
+                    浏览模板
                   </button>
                 </div>
 
                 {/* 星级介绍 */}
                 <div className={landingPageStyles.statsContainer}>
-                  {[
-                    {
-                      value: "50K+",
-                      label: "Resumes Created",
+                  {[ 
+                    { 
+                      value: "50K+", 
+                      label: "已创建简历数", 
                       gradient: "from-violet-600 to-fuchsia-600",
                     },
                     {
-                      value: "4.9★",
-                      label: "User Rating",
+                      value: "4.9★", 
+                      label: "用户评分", 
                       gradient: "from-orange-500 to-red-500",
                     },
                     {
-                      value: "5 Min",
-                      label: "Build Time",
+                      value: "5 分钟", 
+                      label: "平均创建时长", 
                       gradient: "from-emerald-500 to-teal-500",
                     },
                   ].map((stat, idx) => (
@@ -203,14 +200,14 @@ const LandingPage = () => {
             <div className={landingPageStyles.featuresContainer}>
               <div className={landingPageStyles.featuresHeader}>
                 <h2 className={landingPageStyles.featureTitle}>
-                  Why Choose
+                  为什么选择
                   <span className={landingPageStyles.featuresTitleGradient}>
-                    ResumeXpert?
+                    OrangeResume
                   </span>
+                  ？
                 </h2>
                 <p className={landingPageStyles.featuresDescription}>
-                  ResumeXpert is a powerful tool that helps you create a
-                  professional and ATS-friendly resume.
+                  OrangeResume 帮你快速生成专业、适配 ATS 的简历。
                 </p>
               </div>
 
@@ -218,9 +215,8 @@ const LandingPage = () => {
                 {[
                   {
                     icon: <Zap className={landingPageStyles.featureIcon} />,
-                    title: "Lightning Fast",
-                    description:
-                      "Create professional resumes in under 5 minutes with our streamlined process",
+                    title: "极速生成",
+                    description: "用精简流程，5 分钟内创建专业简历",
                     gradient: landingPageStyles.featureIconViolet,
                     bg: landingPageStyles.featureCardViolet,
                   },
@@ -230,9 +226,8 @@ const LandingPage = () => {
                         className={landingPageStyles.featureIcon}
                       />
                     ),
-                    title: "Pro Templates",
-                    description:
-                      "Choose from dozens of recruiter-approved, industry-specific templates",
+                    title: "专业模板",
+                    description: "数十款行业模板，HR 认可的结构与版式",
                     gradient: landingPageStyles.featureIconFuchsia,
                     bg: landingPageStyles.featureCardFuchsia,
                   },
@@ -240,9 +235,8 @@ const LandingPage = () => {
                     icon: (
                       <Download className={landingPageStyles.featureIcon} />
                     ),
-                    title: "Instant Export",
-                    description:
-                      "Download high-quality PDFs instantly with perfect formatting",
+                    title: "一键导出",
+                    description: "一键下载高质量 PDF，排版完美",
                     gradient: landingPageStyles.featureIconOrange,
                     bg: landingPageStyles.featureCardOrange,
                   },
@@ -277,14 +271,14 @@ const LandingPage = () => {
                 <div className={landingPageStyles.ctaCardBg}></div>
                 <div className={landingPageStyles.ctaCardContent}>
                   <h2 className={landingPageStyles.ctaTitle}>
-                    Ready to Build Your
+                    准备好创建你的
                     <span className={landingPageStyles.ctaTitleGradient}>
-                      Standout Resume?
+                      亮眼简历
                     </span>
+                    了吗？
                   </h2>
                   <p className={landingPageStyles.ctaDescription}>
-                    Get started with ResumeXpert today and take your job search
-                    to the next level!
+                    立即使用 OrangeResume，助力你的求职更上一层楼！
                   </p>
                   <button
                     className={landingPageStyles.ctaButton}
@@ -292,7 +286,7 @@ const LandingPage = () => {
                   >
                     <div className={landingPageStyles.ctaButtonOverlay}></div>
                     <span className={landingPageStyles.ctaButtonText}>
-                      Start Building Now
+                      现在开始创建
                     </span>
                   </button>
                 </div>
@@ -303,9 +297,7 @@ const LandingPage = () => {
 
         <footer className={landingPageStyles.footer}>
           <div className={landingPageStyles.footerContainer}>
-            <p className={landingPageStyles.footerText}>
-              Best Wishes For Your Success!
-            </p>
+            <p className={landingPageStyles.footerText}>祝你求职顺利！</p>
           </div>
         </footer>
 
